@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <link rel="stylesheet" href="global.css" />
+  <body class="content">
+    <div id="root" class="box"></div>
+    <div class="text">
+      <div class="textarea-container">
+        <textarea rows="2" class="textarea" id="txtPrompt">
+Generate text of 5000 characters on the ancient Rome history</textarea
+        >
+        <div class="controls">
+          <span>Model: </span>
+          <select class="model">
+            <option value="gpt-4o-mini" selected="true">gpt-4o-mini</option>
+            <option value="gpt-4o">gpt-4o</option>
+            <option value="o1-mini">o1-mini</option>
+            <option value="o1-preview">o1-preview</option>
+          </select>
+        </div>
+      </div>
+      <div style="display: flex">
+        <button id="btnSend">Send</button>
+        <button id="btnAbort" class="hidden" title="Stop"></button>
+      </div>
+    </div>
+    <script src="browser-page.js" defer></script>
+  </body>
+</html>

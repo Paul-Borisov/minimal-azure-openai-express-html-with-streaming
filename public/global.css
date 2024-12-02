@@ -1,0 +1,116 @@
+:root {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --background: #ffffff;
+    --foreground: #171717;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-synthesis: none;
+}
+
+.content {
+  display: grid;
+  height: 97vh;
+  place-content: center;
+  grid-template-rows: 10fr 1fr;
+}
+
+.box {
+  text-align: justify;
+  height: 85vh;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+.box,
+.text {
+  width: 70vw;
+}
+
+@media (max-width: 640px) {
+  .box,
+  .text {
+    width: 95vw;
+  }
+}
+
+.text {
+  margin-top: 15px;
+  margin-bottom: 5px;
+  display: flex;
+}
+
+.textarea-container {
+  padding: 5px;
+  width: 100%;
+}
+.textarea {
+  width: inherit;
+  padding: inherit;
+  padding-right: 0px;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.models {
+  height: 1.5rem;
+}
+
+.controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+  gap: 0.25rem;
+  margin-right: -6px;
+}
+
+.error {
+  font-weight: 600;
+  color: #f00;
+}
+
+#btnSend,
+#btnAbort {
+  cursor: pointer;
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+#btnSend {
+  height: 30px;
+}
+
+#btnAbort {
+  width: 30px;
+  height: 30px;
+  background-color: #000;
+  border: 2px solid #ccc;
+}
+
+.hidden {
+  visibility: hidden;
+}
