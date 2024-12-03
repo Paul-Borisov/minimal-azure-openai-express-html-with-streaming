@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
+    "dev": "node --watch server.js",
+    "dev:kl": "node --watch server-entraid.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

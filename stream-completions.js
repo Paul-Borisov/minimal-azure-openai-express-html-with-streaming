@@ -1,4 +1,9 @@
-async function generateCompletionsStream(req, res, openaiClient) {
+async function generateCompletionsStream(
+  req,
+  res,
+  openaiClient,
+  systemInstructions // = "You are a helpful assistant."
+) {
   const messages = req.body.messages;
   const model = req.body.model;
 
@@ -13,7 +18,7 @@ async function generateCompletionsStream(req, res, openaiClient) {
 
   const system = {
     role: model.startsWith("o1-") ? "assistant" : "system",
-    content: "You are a helpful assistant.",
+    content: systemInstructions,
   };
 
   try {
