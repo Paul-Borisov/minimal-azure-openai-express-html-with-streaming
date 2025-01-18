@@ -26,14 +26,14 @@ async function generateCompletionsStream(req, res, openaiClient) {
     for await (const part of completion) {
       const content = part.choices[0]?.delta?.content || "";
       if (content) {
-        res.write(`data: ${content}\n\n`);
+        res.write(`data: ${content}\r`);
       }
     }
-    res.write("data: [DONE]\n\n");
+    res.write("data: [DONE]");
     res.end();
   } catch (error) {
     console.error("Error:", error);
-    res.write("data: [ERROR]\n\n");
+    res.write("data: [ERROR]");
     res.end();
   }
 }

@@ -70,8 +70,7 @@
         const chunkValue = decoder.decode(value);
 
         const lines = chunkValue
-          .split("\n")
-          .filter((line) => line.startsWith("data:"));
+          .split("\r");
 
         for (const line of lines) {
           //if (line.includes("Roman")) throw "Custom error";
@@ -79,6 +78,11 @@
           if (msg === "[DONE]") {
             done = true;
             handleStop();
+            // https://www.npmjs.com/package/@wcj/markdown-to-html
+            if(output.includes('```') || output.includes('##')) {
+              output = markdown.default(output);
+              root.innerHTML = output;
+            }
             break;
           }
           output += msg;

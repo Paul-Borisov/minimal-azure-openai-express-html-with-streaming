@@ -2,7 +2,7 @@
 <html lang="en">
   <link rel="stylesheet" href="global.css" />
   <body class="content">
-    <div id="root" class="box"></div>
+    <div id="root" class="box markdown-body"></div>
     <div class="text">
       <div class="textarea-container">
         <textarea rows="2" class="textarea" id="txtPrompt">
@@ -24,5 +24,8 @@ Generate text of 5000 characters on the ancient Rome history</textarea
       </div>
     </div>
     <script src="browser-page.js" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.0/dist/katex.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/@wcj/markdown-to-html/dist/marked.css">
+    <script src="https://unpkg.com/@wcj/markdown-to-html/dist/markdown.min.js"></script>
   </body>
 </html>

@@ -16,6 +16,9 @@ body {
   font-synthesis: none;
 }
 
+.markdown-body ol {
+  display: inline;
+}
 .content {
   display: grid;
   height: 97vh;
@@ -28,6 +31,7 @@ body {
   height: 85vh;
   overflow-y: auto;
   padding: 5px;
+  white-space: pre-wrap;
 }
 
 .box,
