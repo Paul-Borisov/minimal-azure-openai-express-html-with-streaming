@@ -17,7 +17,7 @@ async function generateCompletionsStream(
   res.setHeader("Connection", "keep-alive");
 
   const system = {
-    role: model.startsWith("o1-") ? "assistant" : "system",
+    role: model.startsWith("o1") ? "assistant" : "system",
     content: systemInstructions,
   };
 

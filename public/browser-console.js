@@ -2,6 +2,12 @@
   const model = "gpt-4o-mini";
   //const model = "o1-mini";
 
+  const targetEndpoints = {
+    "4o": "azureopenai",
+    "o1": "openai",
+    "default": "openai"
+  };
+
   const messages = [
     {
       role: "user",
@@ -10,8 +16,15 @@
   ];
 
   try {
-    const engine = model.startsWith("o1-") ? "openai" : "azureopenai";
-    const endpointUri = `${window.location.origin}/api/${engine}/chat`;
+    let endpoint;
+    for(const key of Object.keys(targetEndpoints)) {
+      if(model.includes(key)) {
+        endpoint = targetEndpoints[key];
+        break;
+      }
+    }
+    if(!endpoint) endpoint = targetEndpoints["default"];
+    const endpointUri = `${window.location.origin}/api/${endpoint}/chat`;
 
     const res = await fetch(endpointUri, {
       method: "POST",
@@ -36,8 +49,7 @@
       done = doneReading;
       const chunkValue = decoder.decode(value);
 
-      const lines = chunkValue
-        .split("\r");
+      const lines = chunkValue.split("\r");
 
       for (const line of lines) {
         //if (line.includes("Roman")) throw "Custom error";

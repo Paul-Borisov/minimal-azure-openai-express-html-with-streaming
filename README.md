@@ -6,12 +6,15 @@ This project highlights:
 
 - The use of streaming outputs in OpenAI / Azure OpenAI.
 - A clear, visually noticeable difference in the streaming performance between the older gpt-4o-mini / gpt-4o models and the newer o1-mini / o1-preview language models.
-- How to test keyless Entra ID authentication in Azure OpenAI.
+- Testing keyless Entra ID authentication in Azure OpenAI.
 - The ability to cancel an ongoing streaming request using the **Stop** button.
+- Options to formatting AI outputs for code blocks and markdown content.
+- Working with chat history context.
 
 Technical stack:
 
 - Node.js, Express server, OpenAI module, @azure/identity for API key and keyless Entra ID authentication, plain JavaScript, and index.html.
+- highlight.js, marked.js
 
 # Getting started
 
@@ -68,6 +71,17 @@ You can adjust the specific models used in the file public/index.html.
 </select>
 ```
 
+You can also change target endpoint routings - to azureopenai or openai - at the header of public/browser-page.js (public/browser-console.js for the console client)
+- By default, 4o-models are routed to Azure OpenAI and o1-ones to the regular OpenAI.
+
+```javascript
+const targetEndpoints = {
+  "4o": "azureopenai",
+  "o1": "openai",
+  "default": "openai"
+};
+```
+
 ### User interface with streaming output, which consumes data from the server
 
 Open http://localhost:3000 in your browser.
@@ -76,7 +90,7 @@ Alternatively, you can open public/index.html from the local folder and click th
 
 ### Browser console client with streaming output, which consumes data from the server
 
-Execute browser-client.js in the browser's console.
+Execute public/browser-console.js in the browser's console available by pressing F12 in Chrome.
 
 # How to test keyless authentication for Azure OpenAI on this express server
 
