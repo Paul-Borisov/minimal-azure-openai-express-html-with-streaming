@@ -1,13 +1,13 @@
 # Overview
 
-This is an educational OpenAI project that I developed for my colleagues to demonstrate the use of streaming output with Azure OpenAI and regular OpenAI clients.
+This is an educational OpenAI project that I developed for my colleagues to demonstrate the use of streaming outputs with Azure OpenAI and regular OpenAI clients.
 
 This project highlights:
 
-- The use of streaming output in OpenAI / Azure OpenAI.
-- A clear, visually noticeable difference in streaming performance between the older gpt-4o-mini / gpt-4o models and the newer o1-mini / o1-preview language models.
-- The use of keyless Entra ID authentication in Azure OpenAI for testing.
-- The ability to cancel an ongoing streaming request using the "Stop" button.
+- The use of streaming outputs in OpenAI / Azure OpenAI.
+- A clear, visually noticeable difference in the streaming performance between the older gpt-4o-mini / gpt-4o models and the newer o1-mini / o1-preview language models.
+- How to test keyless Entra ID authentication in Azure OpenAI.
+- The ability to cancel an ongoing streaming request using the **Stop** button.
 
 Technical stack:
 
@@ -15,9 +15,9 @@ Technical stack:
 
 # Getting started
 
-Clone the project repository, open it in your preferred editor, such as Visual Studio Code (VSCode).
+Clone the project repository, open it in your preferred editor, such as Visual Studio Code.
 
-Create a .env file by using env.example as a template, and adjust the values as needed.
+Create your own **.env** file using env.example as a template, and adjust your values as needed.
 
 ```bash
 AZURE_OPENAI_ENDPOINT=https://<your-azure-openai-instance>.openai.azure.com
@@ -41,7 +41,7 @@ http://localhost:3000
 
 By default, the server supports the following types of requests to OpenAI instances:
 
-- Azure OpenAI with api-key
+- Azure OpenAI with <api-key>
 - Azure OpenAI with keyless authentication using the Entra ID provider
 - OpenAI with Bearer <apiKey>
 
@@ -50,14 +50,14 @@ The following deployments should be established on your Azure OpenAI instance:
 - gpt-4o
 - gpt-4o-mini
 
-Additionally, there should be two active models available in your OpenAI API (prepaid API service):
+Additionally, there should be two active models available at your OpenAI API (prepaid API service):
 
 As of December 1, 2024, o1-models are not yet publicly available in Azure OpenAI. The server utilizes these models through the regular OpenAI API subscription.
 
 - o1-mini
 - o1-preview
 
-You can adjust the specific models used in the public/index.html file.
+You can adjust the specific models used in the file public/index.html.
 
 ```html
 <select class="model">
@@ -70,13 +70,15 @@ You can adjust the specific models used in the public/index.html file.
 
 ### User interface with streaming output, which consumes data from the server
 
-Open http://localhost:3000 in your browser (alternatively, open public/index.html from the local folder) and click the "Send" button.
+Open http://localhost:3000 in your browser.
+
+Alternatively, you can open public/index.html from the local folder and click the **Send** button.
 
 ### Browser console client with streaming output, which consumes data from the server
 
 Execute browser-client.js in the browser's console.
 
-# How to test keyless authentication for Azure OpenAI on an express server
+# How to test keyless authentication for Azure OpenAI on this express server
 
 To test keyless (Entra ID) authentication locally, follow these steps:
 
@@ -86,7 +88,7 @@ To test keyless (Entra ID) authentication locally, follow these steps:
 
 3. Open your **.env** file. Comment out or remove the line AZURE_OPENAI_API_KEY=...
 
-4. Run the server with the following command: **node server-entraid.js**. Keyless authentication should now work.
+4. Run the server using the following command: **node server-entraid.js**. Keyless authentication should start to work.
 
 # Useful links
 
