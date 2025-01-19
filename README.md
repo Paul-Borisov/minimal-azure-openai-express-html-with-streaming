@@ -40,6 +40,8 @@ http://localhost:3000
 
 ![Complete output in the dark system theme](docs/images/2_complete-output.png "Complete output in the dark system theme")
 
+![Output with code block formatting in the dark system theme](docs/images/3_code-block-formatting.png "Output with code block formatting in the dark system theme")
+
 # Minimal ChatGPT server powered by express.js with streaming outputs
 
 By default, the server supports the following types of requests to OpenAI instances:
