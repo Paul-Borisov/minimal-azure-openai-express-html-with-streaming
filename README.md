@@ -104,7 +104,10 @@ To test keyless (Entra ID) authentication locally, follow these steps:
 
 3. Open your **.env** file. Comment out or remove the line AZURE_OPENAI_API_KEY=...
 
-4. Run the server using the following command: **node server-entraid.js**. Keyless authentication should start to work.
+4. Login to your Azure Portal using the following command. Select your subscription for the Azure AI resource if required:
+   - az login --scope https://cognitiveservices.azure.com/.default
+     
+5. Run the server using the following command: **node server-entraid.js**. Keyless authentication should start to work.
 
 # Useful links
 
