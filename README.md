@@ -46,9 +46,9 @@ http://localhost:3000
 
 By default, the server supports the following types of requests to OpenAI instances:
 
-- Azure OpenAI with <api-key>
+- Azure OpenAI with \<api-key\>
 - Azure OpenAI with keyless authentication using the Entra ID provider
-- OpenAI with Bearer <apiKey>
+- OpenAI with Bearer \<apiKey\>
 
 The following deployments should be established on your Azure OpenAI instance:
 
