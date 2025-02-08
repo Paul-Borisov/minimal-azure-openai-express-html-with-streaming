@@ -1,4 +1,4 @@
-// This is a modern version of a minimal Express.js server for Azure OpenAI and OpenAI endpoints.
+// This is a modern version of the minimal Express.js server for Azure OpenAI and OpenAI endpoints.
 // It uses keyless Entra ID authentication for Azure OpenAI, replacing the less secure apiKey method.
 // For regular OpenAI, it uses a classic apiKey retrieved from the server-side .env variable OPENAI_API_KEY=... for authentication.
 // - Comment out or remove the line AZURE_OPENAI_API_KEY=... in the .env file to avoid conflicts.
@@ -22,7 +22,8 @@ const systemInstructions = process.env["SYSTEM_INSTRUCTIONS"]; //|| "You are a h
 const endpoint = process.env["AZURE_OPENAI_ENDPOINT"];
 const azureApiKey = process.env["AZURE_OPENAI_API_KEY"];
 const apiVersion = process.env["AZURE_OPENAI_API_VERSION"];
-const deployment = process.env["AZURE_OPENAI_API_DEPLOYMENT"];
+const defaultDeployment = process.env["AZURE_OPENAI_API_DEPLOYMENT"];
+const streaming = !/true|1|yes/i.test(process.env["NO_STREAMING"]);
 
 if (azureApiKey) {
   throw new Error("AZURE_OPENAI_API_KEY must be commented out in .env");
@@ -38,35 +39,35 @@ app.use(express.json());
 app.use(cors());
 app.use(express.static(path.join(__dirname, "public")));
 
-// In order to test keyless authentication for Azure OpenAI locally, do the following:
-// 1. Open the Azure OpenAI resource (instance), select "Access Control (IAM)", add the role "Cognitive Services OpenAI User" to the test account
-// 2. Signin with az login using your test account
-// 3. Comment out the line AZURE_OPENAI_API_KEY=... in .env
-// 4. Start the server using the command node server-entraid.js. The keyless auth should work.
-const credential = new DefaultAzureCredential();
-const scope = "https://cognitiveservices.azure.com/.default";
-const azureADTokenProvider = getBearerTokenProvider(credential, scope);
-
-const azOpenai = new AzureOpenAI({
-  apiVersion,
-  endpoint,
-  deployment,
-  azureADTokenProvider,
-});
-
 app.get("/", async (req, res) => {
   res.setHeader("Content-Type", "text/html");
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 // The endpoint to get results from Azure OpenAI
-app.post("/api/azureopenai/chat", async (req, res) =>
-  generateCompletionsStream(req, res, azOpenai, systemInstructions)
-);
+app.post("/api/azureopenai/chat", async (req, res) => {
+  // In order to test keyless authentication for Azure OpenAI locally, do the following:
+  // 1. Open the Azure OpenAI resource (instance), select "Access Control (IAM)", add the role "Cognitive Services OpenAI User" to the test account
+  // 2. Signin with az login using your test account
+  // 3. Comment out the line AZURE_OPENAI_API_KEY=... in .env
+  // 4. Start the server using the command node server-entraid.js. The keyless auth should work.
+  const credential = new DefaultAzureCredential();
+  const scope = "https://cognitiveservices.azure.com/.default";
+  const azureADTokenProvider = getBearerTokenProvider(credential, scope);
+
+  const azOpenai = new AzureOpenAI({
+    apiVersion,
+    endpoint,
+    deployment: req.body.model ?? defaultDeployment,
+    azureADTokenProvider,
+  });
+
+  generateCompletionsStream(req, res, azOpenai, systemInstructions, streaming);
+});
 
 // The endpoint to get results from regular OpenAI
 app.post("/api/openai/chat", async (req, res) =>
-  generateCompletionsStream(req, res, openai, systemInstructions)
+  generateCompletionsStream(req, res, openai, systemInstructions, streaming)
 );
 
 const port = process.env.PORT || 3000;

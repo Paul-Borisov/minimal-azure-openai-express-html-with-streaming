@@ -19,7 +19,7 @@ Technical stack:
 
 ### Updates and bug fixes:
 
-**February 8, 2025, v1.0.3**
+**February 8, 2025, v1.0.4**
 - Default configuration does not require Azure OpenAI. Use your regular OpenAI endpoints and explicitly configure specific ones to be handled by Azure OpenAI. Colleagues commented that they did not have access to Azure OpenAI outside Microsoft environment.
 - Added o3-mini, o1, o1-2024-12-17, gpt-3.5-turbo, and gpt-4-32k-0314 to available default selections. You can add more models to index.html.
   - As of Feb 8, 2025, the model o3-mini were available for OpenAI users that have Tier 3 or higher.
@@ -30,10 +30,17 @@ Technical stack:
 - Added handling for the Enter and Space keys:
   - If the user clicks Enter in the prompt box, this initiates the request. The user can interrupt the process by pressing Enter or Space.
   - The user can enter multiple lines into the prompt box by holding the Shift, Alt, or Ctrl key and pressing Enter. This does not initiate the request.
+- Added the option to disable streaming for all models.
+  - Streaming is ON by default for all models. Models that do not support streaming options automatically fallback to the regular request processing.
+  - Uncomment the line NO_STREAMING=true in your .env file to disable streaming. Please refer to .env.example for details.
 
-Bug fixes:
-- Fixed the bug with duplicates in the conversation history that appeared after the second request.
-- Fixed the bug with node --watch. This experimental switch caused infinite loops occasionally. For instance, when I used **npm run dev** on the first load. I replaced node --watch with the old good nodemon. Now **npm run dev** can be used for the dynamic reloads on file updates.
+Bugs fixed:
+- Duplicates in the conversation history that appeared after the second request.
+- The experimental switch of node **--watch** caused infinite loops occasionally. For instance, when I used **npm run dev** on the first load. 
+  - I replaced node --watch with the old good nodemon. Now **npm run dev** can be used for the dynamic reloads on file updates.
+- Azure OpenAI used default model deployment for different model selections. I moved the logic to the route handler.
+  - Values of the selected models should match with the existing Azure OpenAI deployment for this selection.
+  - These values can be adjusted for each Azure OpenAI enabled model in index.html.
 
 # Getting started
 Sign up for the OpenAI API at https://platform.openai.com/

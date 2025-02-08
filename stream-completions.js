@@ -15,7 +15,8 @@ async function generateCompletionsStream(
   req,
   res,
   openaiClient,
-  systemInstructions // = "You are a helpful assistant."
+  systemInstructions, // = "You are a helpful assistant."
+  streaming
 ) {
   const messages = req.body.messages;
   const model = req.body.model;
@@ -25,7 +26,7 @@ async function generateCompletionsStream(
     return;
   }
 
-  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Content-Type", streaming ? "text/event-stream": "application/json");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
 
@@ -45,6 +46,22 @@ async function generateCompletionsStream(
     res.write(`data:  ${error.message || ""}`);
     res.end();
   };
+
+  const fallback = () => {
+    fallBackGenerateCompletionsWithNoStreaming({
+      res,
+      openaiClient,
+      onEnd,
+      onError,
+      model,
+      system,
+      messages,
+    });    
+  };
+  if(!streaming) {
+    fallback();
+    return;
+  }
 
   try {
     const completion = await openaiClient.chat.completions.create({
@@ -70,15 +87,7 @@ async function generateCompletionsStream(
           `data: <b>The model ${model} does not support streaming response yet.</b><br/><br/>\r`
         );
       }
-      fallBackGenerateCompletionsWithNoStreaming({
-        res,
-        openaiClient,
-        onEnd,
-        onError,
-        model,
-        system,
-        messages,
-      });
+      fallback();
     } else {
       onError(error);
     }
