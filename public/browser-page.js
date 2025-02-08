@@ -3,29 +3,85 @@
   const txtPrompt = document.querySelector("#txtPrompt");
   const btnSend = document.querySelector("#btnSend");
   const btnAbort = document.querySelector("#btnAbort");
+  const btnClear = document.querySelector("#btnClear");
+  const btnCode = document.querySelector("#btnCode");
+  const btnText = document.querySelector("#btnText");
+  const btnReset = document.querySelector("#btnReset");
   const selectedModel = document.querySelector(".model");
   let model = selectedModel.selectedOptions[0].value;
   let abortController = new AbortController();
 
+  /* 
+  By default, all models are handled by regular OpenAI.
+  You can configure models to be handled by Azure OpenAI and/or regular OpenAI.
+  - Uncomment corresponding lines below.
+  */
   const targetEndpoints = {
-    "4o": "azureopenai",
-    "o1": "openai",
-    "default": "openai"
+    //"4o": "azureopenai",
+    //"o1": "openai",
+    default: "openai",
   };
+
+  const samples = [
+    {code: "Generate javascript regex to replace empty values with '-' in the 3rd field of comma separated rows"},
+    {code: "Add handling of tab-separators to the code"},
+    {code: "Generate bash script to reset user password in Azure using az cli"},
+    {code: "Generate PowerShell script to connect to MongoDB"},
+
+    {text: "Generate text of 5000 characters on the ancient Rome history"},
+    {text: "Generate text of 200 characters on your choice"},
+    {text: "Alice has 3 sisters and 5 brothers. How many sisters and brothers Alice's brother has?"},
+    {text: "There are 3 killers in a room. A regular person enters the room and kills one of the killers. How many killers are in the room?"},
+    {text: "Generate CSV-table for all weeks of 2025. Columns: WeekNumber, StartDate;, EndDate. Use semicolon as column delimiter and ISO-date format. Start day is Monday. End day is Friday. Wrap into ```"},
+
+    {default: "Generate test response of 100 characters"},
+  ];
 
   const chatHistory = [];
 
+  const setInitialText = () => {
+    txtPrompt.value = samples.find(s => !!s.text).text;
+  };
+  setInitialText();
+
+  const setDefaultContent = () => {
+    txtPrompt.value = samples.find(s => !!s.default).default;
+    return txtPrompt.value;
+  };
+
   const handleStart = () => {
-    //btnSend.classList.add("hidden");
-    btnSend.setAttribute("disabled", true);
+    document.querySelectorAll(".text button").forEach(btn => btn.setAttribute("disabled", true));
     btnAbort.classList.remove("hidden");
+    btnAbort.removeAttribute("disabled");
   };
 
   const handleStop = () => {
-    //btnSend.classList.remove("hidden");
-    btnSend.removeAttribute("disabled");
+    document.querySelectorAll(".text button").forEach(btn => btn.removeAttribute("disabled"));
     btnAbort.classList.add("hidden");
   };
+
+  const handleNextPrompt = (type) => { // type = "text", type = "code"
+    const index = samples.findIndex(s => s[type] === txtPrompt.value);
+    if(index === -1) {
+      txtPrompt.value = samples.find(s => !!s[type])?.[type] || "";
+      return;
+    }
+    let nextPromptValue;
+    if(samples[index][type]) {
+      nextPromptValue = samples.find((s,i) => i > index && !!s[type]);
+    }
+    txtPrompt.value = nextPromptValue ? nextPromptValue[type] : samples.find(s => !!s[type])?.[type] || "";
+  };
+
+  const handleClear = () => {
+    txtPrompt.value = "";
+  }
+
+  const handleReset = () => {
+    root.innerHTML = "";
+    setInitialText();
+    chatHistory.splice(0, chatHistory.length);
+  }
 
   btnSend.addEventListener("click", () => {
     handleStart();
@@ -36,22 +92,26 @@
     handleStop();
     abortController = new AbortController();
   });
+  btnCode.addEventListener("click", () => handleNextPrompt("code"));
+  btnText.addEventListener("click", () => handleNextPrompt("text"));
+  btnClear.addEventListener("click", handleClear);
+  btnReset.addEventListener("click", handleReset);
   selectedModel.addEventListener("change", () => {
     model = selectedModel.selectedOptions[0].value;
   });
 
   async function processRequest(content, model) {
     let endpoint;
-    for(const key of Object.keys(targetEndpoints)) {
-      if(model.includes(key)) {
+    for (const key of Object.keys(targetEndpoints)) {
+      if (model.includes(key)) {
         endpoint = targetEndpoints[key];
         break;
       }
     }
-    if(!endpoint) endpoint = targetEndpoints["default"];
+    if (!endpoint) endpoint = targetEndpoints["default"];
     const endpointUri = `${window.location.origin}/api/${endpoint}/chat`;
 
-    const userContent = content ? content : "Generate test response of 100 characters";
+    const userContent = content ? content : setDefaultContent();
     const messages = [
       ...chatHistory,
       {
@@ -82,10 +142,12 @@
       let done = false;
 
       const chatHistoryOutput = [];
-      for(const chatEntry of chatHistory) {
-        chatHistoryOutput.push(getFormattedOutput(chatEntry.content, chatEntry.role !== "user"));
+      for (const chatEntry of chatHistory) {
+        chatHistoryOutput.push(
+          getFormattedOutput(chatEntry.content, chatEntry.role !== "user")
+        );
       }
-      const formattedChatHistory = chatHistoryOutput.join('\n');
+      const formattedChatHistory = chatHistoryOutput.join("\n");
 
       const formattedUserRequest = getFormattedOutput(userContent, false);
       while (!done) {
@@ -102,19 +164,19 @@
             done = true;
             handleStop();
             // https://github.com/markedjs/marked
-            chatHistory.push(...messages)
+            // Bug fix: history duplicates after the second output
+            // chatHistory.push(...messages)
+            chatHistory.push(messages[messages.length - 1]);
             chatHistory.push({
               role: "assistant",
-              content: rawOutput.join(''),
-            })
-            txtPrompt.value = "";
-            //console.log("chatHistory", chatHistory)
+              content: rawOutput.join(""),
+            });
             break;
           }
           rawOutput.push(msg);
-          formattedAiOutput = getFormattedOutput(rawOutput.join(''), true)
+          formattedAiOutput = getFormattedOutput(rawOutput.join(""), true);
           root.innerHTML = `${formattedChatHistory}\n${formattedUserRequest}\n${formattedAiOutput}`;
-          root.scrollTo({top: root.scrollHeight});
+          root.scrollTo({ top: root.scrollHeight });
         }
       }
     } catch (error) {

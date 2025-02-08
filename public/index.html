@@ -5,21 +5,32 @@
     <div id="root" class="box markdown-body"></div>
     <div class="text">
       <div class="textarea-container">
-        <textarea rows="2" class="textarea" id="txtPrompt">Generate text of 5000 characters on the ancient Rome history</textarea>
+        <textarea rows="2" class="textarea" id="txtPrompt"></textarea>
         <div class="controls">
-          <span>Model: </span>
-          <select class="model">
-            <option value="gpt-4o-mini" selected="true">gpt-4o-mini</option>
-            <option value="gpt-4o">gpt-4o</option>
-            <!--option value="gpt-4o-realtime-preview">gpt-4o-realtime-preview</option>
-            <option value="gpt-4-32k-0314">gpt-4-32k-0314</option>
-            <option value="gpt-3.5-turbo">gpt-3.5-turbo</option-->
-            <option value="o1-mini">o1-mini</option>
-            <option value="o1-preview">o1-preview</option>
-          </select>
+          <div class="action-buttons">
+            <button id="btnClear">Clear</button>
+            <button id="btnCode">Code</button>
+            <button id="btnText">Text</button>
+            <button id="btnReset">Reset</button>
+          </div>
+          <div>
+            <span>Model: </span>
+            <select class="model">
+              <option value="gpt-4o-mini" selected="true">gpt-4o-mini</option>
+              <option value="gpt-4o">gpt-4o</option>
+              <option value="o1-mini">o1-mini</option>
+              <option value="o1-preview">o1-preview</option>
+              <option value="o3-mini">o3-mini (tier 3+ required)</option>
+              <option value="o1">o1</option>
+              <option value="o1-2024-12-17">o1-2024-12-17</option>
+              <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+              <option value="gpt-4-32k-0314">gpt-4-32k-0314</option>
+              <!--option value="gpt-4o-realtime-preview">gpt-4o-realtime-preview</option-->
+              </select>
+          </div>
         </div>
       </div>
-      <div style="display: flex">
+      <div class="flex">
         <button id="btnSend">Send</button>
         <button id="btnAbort" class="hidden" title="Stop"></button>
       </div>
@@ -27,9 +38,9 @@
     <script src="browser-page.js" defer></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.0/dist/katex.min.css">
     <link rel="stylesheet" href="https://unpkg.com/@wcj/markdown-to-html/dist/marked.css">
+    <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.11.1/styles/default.min.css"/>
     <!--script src="https://unpkg.com/@wcj/markdown-to-html/dist/markdown.min.js" defer></script-->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
-    <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.11.1/styles/default.min.css"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/javascript.min.js" defer></script>
     <script src="marked-custom.js" defer></script>

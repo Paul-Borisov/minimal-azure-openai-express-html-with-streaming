@@ -16,6 +16,20 @@ Technical stack:
 - Node.js, Express server, OpenAI module, @azure/identity for API key and keyless Entra ID authentication, plain JavaScript, and index.html.
 - highlight.js, marked.js
 
+### Updates and bug fixes:
+
+**February 8, 2025, v1.0.3**
+- Default configuration does not require Azure OpenAI. Use your regular OpenAI endpoints and explicitly configure specific ones to be handled by Azure OpenAI. Colleagues commented that they did not have access to Azure OpenAI outside Microsoft environment.
+- Added o3-mini, o1, o1-2024-12-17, gpt-3.5-turbo, and gpt-4-32k-0314 to available default selections. You can add more models to index.html.
+  - As of Feb 8, 2025, the model o3-mini were available for OpenAI users that have Tier 3 or higher.
+  - The full models o1 and o1-2024-12-17 did not have the streaming option in API. I added fallback to the regular handling to support these models.
+- Added sample code- and text- prompts rotated by new buttons **Code** and **Text** respectively; added **Clear** and **Reset** buttons.
+![New models and control buttons](docs/images/4_new-models-and-control-buttons.png "New models and control buttons")
+
+Bug fixes:
+- Fixed the bug with duplicates in the conversation history that appeared after the second request.
+- Fixed the bug with node --watch. This experimental switch caused infinite loops occasionally. For instance, when I used **npm run dev** on the first load. I replaced node --watch with the old good nodemon. Now **npm run dev** can be used for the dynamic reloads on file updates.
+
 # Getting started
 
 Clone the project repository, open it in your preferred editor, such as Visual Studio Code.
@@ -73,13 +87,16 @@ You can adjust the specific models used in the file public/index.html.
 </select>
 ```
 
-You can also change target endpoint routings - to azureopenai or openai - at the header of public/browser-page.js (public/browser-console.js for the console client)
-- By default, 4o-models are routed to Azure OpenAI and o1-ones to the regular OpenAI.
+You can also change target endpoint routings - to azureopenai or openai - at the header of public/browser-page.js (public/browser-console.js for the console client).
+
+By default, requests to language model endpoints are handled by the regular OpenAI.
+You can reconfigure specific models to be handled by Azure OpenAI and/or the regular OpenAI.
+- Uncomment corresponding lines.
 
 ```javascript
 const targetEndpoints = {
-  "4o": "azureopenai",
-  "o1": "openai",
+  //"4o": "azureopenai",
+  //"o1": "openai",
   "default": "openai"
 };
 ```

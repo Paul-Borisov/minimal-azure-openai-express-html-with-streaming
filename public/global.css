@@ -21,6 +21,21 @@ p, hr {
   margin-top: auto !important;
 }
 
+.flex {
+  display: flex;
+}
+
+
+.action-buttons {
+  display: flex;
+  gap: .5rem;
+  margin-right: auto;
+}
+
+.action-buttons button {
+  width: 4rem;
+}
+
 .markdown-body ol {
   white-space: normal;
 }
@@ -35,6 +50,7 @@ p, hr {
   background-color: #f9f9f9;
   width: fit-content;
   white-space: normal !important;
+  max-width: 67vw;
 }
 
 .code-container .hljs {
@@ -101,6 +117,9 @@ p, hr {
   }
   .box {
     margin-top: 10px;
+  }
+  .code-container {
+    max-width: 84vw;
   }
 }
 
