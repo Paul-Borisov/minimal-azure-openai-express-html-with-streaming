@@ -39,8 +39,6 @@ Bugs fixed:
 - The experimental switch of node **--watch** caused infinite loops occasionally. For instance, when I used **npm run dev** on the first load. 
   - I replaced node --watch with the old good nodemon. Now **npm run dev** can be used for the dynamic reloads on file updates.
 - Azure OpenAI used default model deployment for different model selections. I moved the logic to the route handler.
-  - Values of the selected models should match with the existing Azure OpenAI deployment for this selection.
-  - These values can be adjusted for each Azure OpenAI enabled model in index.html.
 
 # Getting started
 Sign up for the OpenAI API at https://platform.openai.com/
@@ -83,23 +81,27 @@ http://localhost:3000
 
 By default, the server supports the following types of requests to OpenAI instances:
 
+- OpenAI with Bearer \<apiKey\>
 - Azure OpenAI with \<api-key\>
 - Azure OpenAI with keyless authentication using the Entra ID provider
-- OpenAI with Bearer \<apiKey\>
 
-The following deployments should be established on your Azure OpenAI instance:
+To test Azure OpenAI chats, establish desired deployments on your Azure OpenAI resource. For instance:
 
-- gpt-4o
 - gpt-4o-mini
+- gpt-4o
+  - Values of the models should match with the established Azure OpenAI deployments.
+  - These values can be adjusted for each Azure OpenAI enabled model in public/index.html.
 
-Additionally, there should be two active models available at your OpenAI API (prepaid API service):
+Additionally, there should be two or more active models available at your regulat OpenAI API prepaid API service.
 
 As of December 1, 2024, o1-models are not yet publicly available in Azure OpenAI. The server utilizes these models through the regular OpenAI API subscription.
 
-- o1-mini
 - o1-preview
+- o1-mini
+  - Update: this model appeared in Azure OpenAI as of Jan, 2025. 
+  - However, it had the reduced functionality if compared with its OpenAI sibling. For instance, it did not support streaming.
 
-You can adjust the specific models used in the file public/index.html.
+You can add the desired models to the file public/index.html.
 
 ```html
 <select class="model">
@@ -119,7 +121,7 @@ You can also change target endpoint routings - to azureopenai or openai - at the
 
 By default, requests to language model endpoints are handled by the regular OpenAI.
 You can reconfigure specific models to be handled by Azure OpenAI and/or the regular OpenAI.
-- Uncomment corresponding lines.
+- Uncomment corresponding lines and make sure that Azure OpenAI deployments exist as mentioned above.
 
 ```javascript
 const targetEndpoints = {
