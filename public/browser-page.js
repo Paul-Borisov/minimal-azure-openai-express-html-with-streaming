@@ -83,11 +83,15 @@
     chatHistory.splice(0, chatHistory.length);
   }
 
+  const isInProgress = () => btnSend.hasAttribute("disabled");
+  
   btnSend.addEventListener("click", () => {
     handleStart();
     processRequest(txtPrompt.value, model);
+    btnAbort.focus();
   });
   btnAbort.addEventListener("click", () => {
+    if(!isInProgress()) return;
     abortController.abort();
     handleStop();
     abortController = new AbortController();
@@ -99,7 +103,18 @@
   selectedModel.addEventListener("change", () => {
     model = selectedModel.selectedOptions[0].value;
   });
-
+  // If user pressed Enter but helds Shift, Alt, or Ctrl key, add the new line otherwise process the request
+  txtPrompt.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" || event.shiftKey) return;
+    if (event.altKey || event.ctrlKey) {
+      txtPrompt.value += "\n";
+      return;
+    }    
+    event.preventDefault();
+    txtPrompt.blur();
+    btnSend.click();
+  });
+  
   async function processRequest(content, model) {
     let endpoint;
     for (const key of Object.keys(targetEndpoints)) {
@@ -172,6 +187,9 @@
               content: rawOutput.join(""),
             });
             break;
+          } else if (msg === "[ERROR]") {
+            done = true;
+            handleStop();
           }
           rawOutput.push(msg);
           formattedAiOutput = getFormattedOutput(rawOutput.join(""), true);

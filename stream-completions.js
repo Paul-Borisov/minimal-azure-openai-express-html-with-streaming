@@ -41,7 +41,8 @@ async function generateCompletionsStream(
 
   const onError = (error) => {
     console.error("Error:", error);
-    res.write("data: [ERROR]");
+    res.write("data: [ERROR]\r");
+    res.write(`data:  ${error.message || ""}`);
     res.end();
   };
 

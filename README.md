@@ -25,12 +25,23 @@ Technical stack:
   - The full models o1 and o1-2024-12-17 did not have the streaming option in API. I added fallback to the regular handling to support these models.
 - Added sample code- and text- prompts rotated by new buttons **Code** and **Text** respectively; added **Clear** and **Reset** buttons.
 ![New models and control buttons](docs/images/4_new-models-and-control-buttons.png "New models and control buttons")
+- Improved error handling.
+- Added handling for the Enter and Space keys:
+  - If the user clicks Enter in the prompt box, this initiates the request. The user can interrupt the process by pressing Enter or Space.
+  - The user can enter multiple lines into the prompt box by holding the Shift, Alt, or Ctrl key and pressing Enter. This does not initiate the request.
 
 Bug fixes:
 - Fixed the bug with duplicates in the conversation history that appeared after the second request.
 - Fixed the bug with node --watch. This experimental switch caused infinite loops occasionally. For instance, when I used **npm run dev** on the first load. I replaced node --watch with the old good nodemon. Now **npm run dev** can be used for the dynamic reloads on file updates.
 
 # Getting started
+Sign up for the OpenAI API at https://platform.openai.com/
+- Tier 0: The free trial provides limited use of the model gpt-4o-mini.
+- Tier 1: This tier allows for comfortable usage of the models gpt-4o-mini, gpt-4o, o1-mini, o1-preview, gpt-3.5-turbo, and gpt-4-32k-0314.
+  - To obtain this tier, OpenAI requires you to deposit $5.
+- Tier 3: This tier provides access to the full-scale o1 models and the newest o3-mini as of February 2025.
+  - To obtain this tier, OpenAI requires you to deposit $100.
+- You can review all available tiers at https://platform.openai.com/docs/guides/rate-limits?tier=tier-one#usage-tiers
 
 Clone the project repository, open it in your preferred editor, such as Visual Studio Code.
 
@@ -47,6 +58,10 @@ OPENAI_API_KEY=<your apiKey for regular OpenAI> # This key is used by o1-mini an
 npm i
 
 node server.js
+
+OR
+
+npm run dev
 
 http://localhost:3000
 
@@ -84,6 +99,11 @@ You can adjust the specific models used in the file public/index.html.
   <option value="gpt-4o">gpt-4o</option>
   <option value="o1-mini">o1-mini</option>
   <option value="o1-preview">o1-preview</option>
+  <option value="o3-mini">o3-mini (tier 3+ required)</option>
+  <option value="o1">o1</option>
+  <option value="o1-2024-12-17">o1-2024-12-17</option>
+  <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+  <option value="gpt-4-32k-0314">gpt-4-32k-0314</option>
 </select>
 ```
 
