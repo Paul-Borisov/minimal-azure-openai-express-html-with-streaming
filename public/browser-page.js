@@ -80,7 +80,7 @@
   const handleReset = () => {
     root.innerHTML = "";
     setInitialText();
-    chatHistory.splice(0, chatHistory.length);
+    chatHistory.length = 0;
   }
 
   const isInProgress = () => btnSend.hasAttribute("disabled");
