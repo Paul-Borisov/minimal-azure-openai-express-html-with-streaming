@@ -21,7 +21,7 @@ p, hr {
   margin-top: auto !important;
 }
 
-.flex {
+.control-buttons {
   display: flex;
 }
 
@@ -89,14 +89,14 @@ p, hr {
 
 .content {
   display: grid;
-  height: 97vh;
+  height: 97dvh;
   place-content: center;
   grid-template-rows: 10fr 1fr;
 }
 
 .box {
   text-align: justify;
-  height: 85vh;
+  height: 87dvh;
   overflow-y: auto;
   padding: 5px;
   white-space: pre-wrap;
@@ -107,6 +107,16 @@ p, hr {
 .text {
   width: 70vw;
   max-width: 70vw;
+}
+
+button {
+  border-radius: 5px;
+  background-color: #444df5;
+  color: white;
+  font-size: 110%;
+}
+.model-header {
+  font-weight: 600;
 }
 
 @media (max-width: 1024px) {
@@ -120,6 +130,57 @@ p, hr {
   }
   .code-container {
     max-width: 84vw;
+  }
+}
+
+@media (max-width: 640px) {
+  .control-buttons {
+    display: block;
+    text-align: center;
+  }
+  button {
+    font-weight: 600;
+    height: 120%;
+  }
+  .model-selector {
+    text-align: end;
+  }
+  #btnSend {
+    margin-left: 5px !important;
+    margin-right: 5px;
+  }
+  textarea {
+    font-size: 130%;
+    min-height: 4rem !important;
+    font-weight: 600 !important;
+  }
+  .action-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .content {
+    height: 93dvh;
+  }
+  .box {
+    height: 77dvh;
+    font-size: 130% !important;
+  }
+  .request {
+    padding-bottom: 0 !important;
+  }
+  .response {
+    padding-bottom: 0 !important;
+    display: grid !important;
+    gap: 0 !important;
+  }
+}
+
+@media (max-height: 400px) {
+  .box {
+    height: 60dvh;
+  }
+  .content {
+    height: 80dvh;
   }
 }
 

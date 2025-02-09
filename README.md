@@ -40,6 +40,10 @@ Bugs fixed:
   - I replaced node --watch with the old good nodemon. Now **npm run dev** can be used for the dynamic reloads on file updates.
 - Azure OpenAI used default model deployment for different model selections. I moved the logic to the route handler.
 
+**February 9, 2025, v1.0.5**
+- Added user interface support for mobile devices.
+- Added a Dockerfile for deployment to containers.
+
 # Getting started
 Sign up for the OpenAI API at https://platform.openai.com/
 - Tier 0: The free trial provides limited use of the model gpt-4o-mini.
