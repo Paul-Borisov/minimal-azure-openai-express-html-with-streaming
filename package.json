@@ -7,7 +7,7 @@
     "dev:kl": "nodemon server-entraid.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Paul Borisov",
   "license": "MIT",
   "description": "",
   "dependencies": {
