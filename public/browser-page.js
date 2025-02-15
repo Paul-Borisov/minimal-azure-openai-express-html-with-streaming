@@ -11,6 +11,28 @@
   let model = selectedModel.selectedOptions[0].value;
   let abortController = new AbortController();
 
+  const thinkingHeader = `<span class="gradient-text">Thinking...</span>`;
+  
+  // Last scroll position for the root element
+  let lastScrollTop = 0;
+  // If the user scrolled up, the auto-scrolldown should be disabled. 
+  // If the use scrolled down and reached the bottom the auto-scrolldown should be enabled again.
+  let freezeAutoScroll = false;
+  root.addEventListener("scroll", () => {
+    let currentScrollTop = root.scrollTop;
+    if (currentScrollTop >= lastScrollTop) {
+      // Scrolled down
+      lastScrollTop = currentScrollTop;
+      if(freezeAutoScroll) freezeAutoScroll = false;
+    } else {
+      // Scrolled up
+      freezeAutoScroll = true;
+    }
+  });
+  const scrollDown = () => {
+    if(!freezeAutoScroll) root.scrollTo({ top: root.scrollHeight });
+  };
+
   /* 
   By default, all models are handled by regular OpenAI.
   You can configure models to be handled by Azure OpenAI and/or regular OpenAI.
@@ -29,7 +51,7 @@
     {code: "Generate PowerShell script to connect to MongoDB"},
 
     {text: "Generate text of 5000 characters on the ancient Rome history"},
-    {text: "Generate text of 200 characters on your choice"},
+    {text: "Generate text of 500 characters on your choice"},
     {text: "Alice has 3 sisters and 5 brothers. How many sisters and brothers Alice's brother has?"},
     {text: "There are 3 killers in a room. A regular person enters the room and kills one of the killers. How many killers are in the room?"},
     {text: "Generate CSV-table for all weeks of 2025. Columns: WeekNumber, StartDate;, EndDate. Use semicolon as column delimiter and ISO-date format. Start day is Monday. End day is Friday. Wrap into ```"},
@@ -116,6 +138,8 @@
   });
   
   async function processRequest(content, model) {
+    lastScrollTop = 0;
+    freezeAutoScroll = false;
     let endpoint;
     for (const key of Object.keys(targetEndpoints)) {
       if (model.includes(key)) {
@@ -165,6 +189,11 @@
       const formattedChatHistory = chatHistoryOutput.join("\n");
 
       const formattedUserRequest = getFormattedOutput(userContent, false);
+      const updateRootInnerHtml = () => {
+        formattedAiOutput = getFormattedOutput(rawOutput.join(""), true);
+        root.innerHTML = `${formattedChatHistory}\n${formattedUserRequest}\n${formattedAiOutput}`;
+        scrollDown();
+      }
       while (!done) {
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
@@ -175,38 +204,63 @@
         for (const line of lines) {
           //if (line.includes("Roman")) throw "Custom error";
           const msg = line.replace("data: ", "");
+          if(rawOutput.length === 2 && rawOutput[0] === thinkingHeader) {
+            // Removes the leading thinkingHeader when the streaming output or fallback has been started.
+            rawOutput.length = 0;
+          }
           if (msg === "[DONE]") {
+            //throw new Error("Custom error!"); // Uncomment this line, click Clear followed by Send
             done = true;
             handleStop();
-            // https://github.com/markedjs/marked
+            // Clean up thinkingHeaders from the content before saving to chatHistory
+            // Removes the trailing thinkingHeader when the fallback has been completed.
+            let thinkingHeaderRemoved = false;
+            rawOutput.forEach((entry,index) => {
+              if(entry.includes(thinkingHeader)) {
+                rawOutput[index] = entry.replace(thinkingHeader,"");
+                thinkingHeaderRemoved = true;
+              }
+            });
             // Bug fix: history duplicates after the second output
             // chatHistory.push(...messages)
             chatHistory.push(messages[messages.length - 1]);
             chatHistory.push({
               role: "assistant",
-              content: rawOutput.join(""),
+              content: rawOutput.join("")
             });
+            if(thinkingHeaderRemoved) updateRootInnerHtml();
             break;
           } else if (msg === "[ERROR]") {
             done = true;
             handleStop();
           }
           rawOutput.push(msg);
-          formattedAiOutput = getFormattedOutput(rawOutput.join(""), true);
-          root.innerHTML = `${formattedChatHistory}\n${formattedUserRequest}\n${formattedAiOutput}`;
-          root.scrollTo({ top: root.scrollHeight });
+          updateRootInnerHtml();
         }
       }
     } catch (error) {
       console.error("Error:", error);
       if (root.innerHTML.length > 0 && root.innerHTML !== "[ERROR]") {
+        const handleErrorOutput = (trailingHtml) => {
+          if(root.innerHTML.includes(thinkingHeader)) {
+            root.innerHTML = root.innerHTML.replace(thinkingHeader, trailingHtml);
+          } else {
+            const response = root.querySelector(".response:last-child div:last-child");
+            if(response) {
+              response.innerHTML += trailingHtml;
+            } else {
+              root.innerHTML += trailingHtml;
+            }
+          }
+        }
         if (error.toString().startsWith("AbortError")) {
-          root.innerHTML += `<b> Cancelled!</b>`;
+          handleErrorOutput("<b>Cancelled!</b>")
         } else {
-          root.innerHTML += `<span class="error"> ERROR: ${error}</span>`;
+          handleErrorOutput(`<span class="error"> ERROR: ${error.message ?? error}</span>`)
         }
       }
       handleStop();
+      scrollDown();
     }
   }
 

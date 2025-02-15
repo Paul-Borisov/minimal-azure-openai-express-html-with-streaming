@@ -46,6 +46,8 @@ Bugs fixed:
 
 **February 15, 2025**
 - The streaming option appeared in the full-scale o1 models. It works seamlessly with v1.0.5.
+- Added gradient header text, **Thinking...**, which is visible while the model is not streaming or does not support streaming output.
+- Added the ability to freeze automatic scrolling if the user's scroll position is not at the bottom of the text.
 
 # Getting started
 Sign up for the OpenAI API at https://platform.openai.com/

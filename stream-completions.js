@@ -11,6 +11,8 @@ const isFirstResponse = (messages) => {
   return true;
 };
 
+const thinkingHeader = `<span class="gradient-text">Thinking...</span>`;
+
 async function generateCompletionsStream(
   req,
   res,
@@ -58,6 +60,7 @@ async function generateCompletionsStream(
       messages,
     });    
   };
+  res.write(`data: ${thinkingHeader}\r`);
   if(!streaming) {
     fallback();
     return;
@@ -69,6 +72,7 @@ async function generateCompletionsStream(
       messages: [system, ...messages],
       stream: true,
     });
+    //throw {code: "unsupported_value", param: "stream"}; // Uncomment this line to test the error condition on the unsupported streaming output.
     if (isIterable(completion)) {
       for await (const part of completion) {
         const content = part.choices[0]?.delta?.content || "";
@@ -84,7 +88,7 @@ async function generateCompletionsStream(
     if (isStreamUnsupported(error)) {
       if (isFirstResponse(messages)) {
         res.write(
-          `data: <b>The model ${model} does not support streaming response yet.</b><br/><br/>\r`
+          `data: <b>The model ${model} does not support streaming response yet. ${thinkingHeader}</b><br/><br/>\r`
         );
       }
       fallback();

@@ -288,3 +288,27 @@ button {
   height: 20px;
   padding-top: 5px;
 }
+
+.response h1,.response h3,.response h3,.response h4,.response h5,.response h6 {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.gradient-text {
+  font-style: italic;
+  font-weight: 600;
+  color: transparent;
+  background: linear-gradient(270deg, rgba(173,173,173,0) 0%, rgba(173,173,173,0.5) 50%, rgba(173,173,173,0) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: slideGradient 2s linear infinite;
+}
+@keyframes slideGradient {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
