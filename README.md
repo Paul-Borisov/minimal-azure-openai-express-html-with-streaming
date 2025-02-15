@@ -44,8 +44,8 @@ Bugs fixed:
 - Added user interface support for mobile devices.
 - Added a Dockerfile for deployment to containers.
 
-**February 15, 2025**
-- The streaming option appeared in the full-scale o1 models. It works seamlessly with v1.0.5.
+**February 15, 2025, v1.0.6**
+- The streaming option appeared in the full-scale o1 models.
 - Added gradient header text, **Thinking...**, which is visible while the model is not streaming or does not support streaming output.
 - Added the ability to freeze automatic scrolling if the user's scroll position is not at the bottom of the text.
 
