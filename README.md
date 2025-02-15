@@ -23,7 +23,7 @@ Technical stack:
 - Default configuration does not require Azure OpenAI. Use your regular OpenAI endpoints and explicitly configure specific ones to be handled by Azure OpenAI. Colleagues commented that they did not have access to Azure OpenAI outside Microsoft environment.
 - Added o3-mini, o1, o1-2024-12-17, gpt-3.5-turbo, and gpt-4-32k-0314 to available default selections. You can add more models to index.html.
   - As of Feb 8, 2025, the model o3-mini were available for OpenAI users that have Tier 3 or higher.
-  - The full models o1 and o1-2024-12-17 did not have the streaming option in API. I added fallback to the regular handling to support these models.
+  - The full models o1 and o1-2024-12-17 did not have the streaming option in API. I added fallback to the regular handling to support these models.   
 - Added sample code- and text- prompts rotated by new buttons **Code** and **Text** respectively; added **Clear** and **Reset** buttons.
 ![New models and control buttons](docs/images/4_new-models-and-control-buttons.png "New models and control buttons")
 - Improved error handling.
@@ -43,6 +43,9 @@ Bugs fixed:
 **February 9, 2025, v1.0.5**
 - Added user interface support for mobile devices.
 - Added a Dockerfile for deployment to containers.
+
+**February 15, 2025**
+- The streaming option appeared in the full-scale o1 models. It works seamlessly with v1.0.5.
 
 # Getting started
 Sign up for the OpenAI API at https://platform.openai.com/
