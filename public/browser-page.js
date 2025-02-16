@@ -74,13 +74,13 @@
 
   const handleStart = () => {
     document.querySelectorAll(".text button").forEach(btn => btn.setAttribute("disabled", true));
-    btnAbort.classList.remove("hidden");
+    btnAbort.classList.remove("invisible");
     btnAbort.removeAttribute("disabled");
   };
 
   const handleStop = () => {
     document.querySelectorAll(".text button").forEach(btn => btn.removeAttribute("disabled"));
-    btnAbort.classList.add("hidden");
+    btnAbort.classList.add("invisible");
   };
 
   const handleNextPrompt = (type) => { // type = "text", type = "code"
