@@ -51,6 +51,7 @@ p, hr {
   width: fit-content;
   white-space: normal !important;
   max-width: 67vw;
+  margin-bottom: 1rem;
 }
 
 .code-container .hljs {
