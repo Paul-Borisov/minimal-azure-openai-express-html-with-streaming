@@ -49,7 +49,7 @@ Bugs fixed:
 - Added gradient header text, **Thinking...**, which is visible while the model is not streaming or does not support streaming output.
 - Added the ability to freeze automatic scrolling if the user's scroll position is not at the bottom of the text.
 
-**March 1, 2025, v1.0.7**
+**March 1, 2025, v1.0.8**
 - Added gpt-4.5-preview.
 
 # Getting started
