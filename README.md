@@ -49,6 +49,9 @@ Bugs fixed:
 - Added gradient header text, **Thinking...**, which is visible while the model is not streaming or does not support streaming output.
 - Added the ability to freeze automatic scrolling if the user's scroll position is not at the bottom of the text.
 
+**March 1, 2025, v1.0.7**
+- Added gpt-4.5-preview.
+
 # Getting started
 Sign up for the OpenAI API at https://platform.openai.com/
 - Tier 0: The free trial provides limited use of the model gpt-4o-mini.
