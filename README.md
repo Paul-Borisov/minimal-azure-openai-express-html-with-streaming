@@ -117,14 +117,14 @@ You can add the desired models to the file public/index.html.
 
 ```html
 <select class="model">
-  <option value="gpt-4o-mini" selected="true">gpt-4o-mini</option>
+  <option value="gpt-4.5-preview">gpt-4.5-preview</option>
   <option value="gpt-4o">gpt-4o</option>
-  <option value="o1-mini">o1-mini</option>
-  <option value="o1-preview">o1-preview</option>
-  <option value="o3-mini">o3-mini (tier 3+ required)</option>
-  <option value="o1">o1</option>
-  <option value="o1-2024-12-17">o1-2024-12-17</option>
   <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+  <option value="gpt-4o-mini" selected="true">gpt-4o-mini</option>
+  <option value="o3-mini">o3-mini (tier 3+ required)</option>
+  <option value="o1-mini">o1-mini</option>
+  <option value="o1">o1</option>
+  <option value="o1-preview">o1-preview</option>
   <option value="gpt-4-32k-0314">gpt-4-32k-0314</option>
 </select>
 ```
