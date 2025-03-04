@@ -52,6 +52,11 @@ Bugs fixed:
 **March 1, 2025, v1.0.8**
 - Added gpt-4.5-preview.
 
+**March 4, 2025, v1.0.9**
+- Added optional support for deepseek-chat and deepseek-reasoner models that correspond to DeepSeek V3 and DeepSeek R1 accordingly.
+- To enable them, sign up to https://platform.deepseek.com/, create an API key and deposit min 2$.
+- Update DEEPSEEK_API_KEY with your API key. Now, you can start using DeepSeek models within this web app.
+
 # Getting started
 Sign up for the OpenAI API at https://platform.openai.com/
 - Tier 0: The free trial provides limited use of the model gpt-4o-mini.
@@ -98,6 +103,7 @@ By default, the server supports the following types of requests to OpenAI instan
 - OpenAI with Bearer \<apiKey\>
 - Azure OpenAI with \<api-key\>
 - Azure OpenAI with keyless authentication using the Entra ID provider
+- DeepSeek with Bearer \<apiKey\>
 
 To test Azure OpenAI chats, establish desired deployments on your Azure OpenAI resource. For instance:
 
@@ -128,6 +134,8 @@ You can add the desired models to the file public/index.html.
   <option value="o1">o1</option>
   <option value="o1-preview">o1-preview</option>
   <option value="gpt-4-32k-0314">gpt-4-32k-0314</option>
+  <option value="deepseek-chat">deepseek-chat (deepseek-v3)</option>
+  <option value="deepseek-reasoner">deepseek-reasoner (deepseek-r1)</option>
 </select>
 ```
 
@@ -141,6 +149,7 @@ You can reconfigure specific models to be handled by Azure OpenAI and/or the reg
 const targetEndpoints = {
   //"4o": "azureopenai",
   //"o1": "openai",
+  "deepseek": "deepseek",
   "default": "openai"
 };
 ```

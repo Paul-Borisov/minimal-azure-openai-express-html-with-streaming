@@ -43,7 +43,8 @@
     //"4o": "azureopenai",
     //"o1": "openai",
     //"o1-mini": "azureopenai",
-    default: "openai",
+    "deepseek": "deepseek",
+    "default": "openai",
   };
 
   const samples = [

@@ -34,6 +34,9 @@ if (azureApiKey) {
 const apiKey = process.env["OPENAI_API_KEY"];
 const openai = new OpenAI({ apiKey });
 
+const deepSeekApiKey = process.env["DEEPSEEK_API_KEY"];
+const deepSeek = deepSeekApiKey ? new OpenAI({baseURL: 'https://api.deepseek.com', apiKey }) : undefined;
+
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -69,6 +72,13 @@ app.post("/api/azureopenai/chat", async (req, res) => {
 app.post("/api/openai/chat", async (req, res) =>
   generateCompletionsStream(req, res, openai, systemInstructions, streaming)
 );
+
+if(deepSeek) {
+  // The endpoint to get results from DeekSeek
+  app.post("/api/deekseek/chat", async (req, res) =>
+    generateCompletionsStream(req, res, deepSeek, systemInstructions, streaming)
+  );
+}
 
 const port = process.env.PORT || 3000;
 
