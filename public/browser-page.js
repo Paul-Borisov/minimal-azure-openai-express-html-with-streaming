@@ -43,6 +43,8 @@
     //"4o": "azureopenai",
     //"o1": "openai",
     //"o1-mini": "azureopenai",
+    //"o3-mini": "azureopenai",
+    //"embedding": "azureopenai",
     "deepseek": "deepseek",
     "default": "openai",
   };
@@ -140,6 +142,8 @@
     btnSend.click();
   });
   
+  const isEmbeddingModel = (model) => /embedding/i.test(model);
+
   async function processRequest(content, model) {
     lastScrollTop = 0;
     freezeAutoScroll = false;
@@ -151,8 +155,14 @@
       }
     }
     if (!endpoint) endpoint = targetEndpoints["default"];
-    const endpointUri = `${window.location.origin}/api/${endpoint}/chat`;
 
+    let endpointUri;
+    const isEmbedding = isEmbeddingModel(model);
+    if(isEmbedding) {
+      endpointUri = `${window.location.origin}/api/${endpoint}/embeddings`;
+    } else {
+      endpointUri = `${window.location.origin}/api/${endpoint}/chat`;
+    }
     const userContent = content ? content : setDefaultContent();
     const messages = [
       ...chatHistory,
@@ -161,16 +171,31 @@
         content: userContent,
       },
     ];
-
+  
     try {
-      const res = await fetch(endpointUri, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ messages, model }),
-        signal: abortController.signal,
-      });
+      let res;
+      if(isEmbedding) {
+        let dimensions = null;
+        if(/-3/i.test(model)) dimensions = 1536;
+        if(/-3-large/i.test(model)) dimensions = 3072;
+        res = await fetch(endpointUri, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ input: userContent, model, dimensions }),
+          signal: abortController.signal,
+        });
+      } else {
+        res = await fetch(endpointUri, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ messages, model }),
+          signal: abortController.signal,
+        });
+      }
 
       if (!res.ok) {
         throw new Error("Network response was not ok");
@@ -193,7 +218,11 @@
 
       const formattedUserRequest = getFormattedOutput(userContent, false);
       const updateRootInnerHtml = () => {
-        formattedAiOutput = getFormattedOutput(rawOutput.join(""), true);
+        if(isEmbedding) {
+          formattedAiOutput = getFormattedOutput(formatEmbeddings(rawOutput.join("")), true);
+        } else {
+          formattedAiOutput = getFormattedOutput(rawOutput.join(""), true);
+        }
         root.innerHTML = `${formattedChatHistory}\n${formattedUserRequest}\n${formattedAiOutput}`;
         scrollDown();
       }
@@ -227,10 +256,17 @@
             // Bug fix: history duplicates after the second output
             // chatHistory.push(...messages)
             chatHistory.push(messages[messages.length - 1]);
-            chatHistory.push({
-              role: "assistant",
-              content: rawOutput.join("")
-            });
+            if(isEmbedding) {
+              chatHistory.push({
+                role: "assistant",
+                content: formatEmbeddings(rawOutput.join(""))
+              });  
+            } else {
+              chatHistory.push({
+                role: "assistant",
+                content: rawOutput.join("")
+              });  
+            }                
             if(thinkingHeaderRemoved) updateRootInnerHtml();
             break;
           } else if (msg === "[ERROR]") {
@@ -278,5 +314,9 @@
           <div class="user-content">${marked.marked(rawOutput)}</div>
         </div>`;
     return formatted;
+  }
+
+  function formatEmbeddings(embeddings) {
+    return "```embeddings\n" + embeddings + "\n```";
   }
 })();

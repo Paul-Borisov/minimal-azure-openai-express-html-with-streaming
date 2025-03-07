@@ -57,6 +57,13 @@ Bugs fixed:
 - To enable them, sign up to https://platform.deepseek.com/, create an API key and deposit min 2$.
 - Update DEEPSEEK_API_KEY with your API key. Now, you can start using DeepSeek models within this web app.
 
+**March 7, 2025, v1.0.10**
+- Added three embedding models
+  - text-embedding-3-large, 3072 dimensions
+  - text-embedding-3-small, 1536 dimensions
+  - text-embedding-ada-002, default dimensions (1536)
+- Updated .env.example to the newer AZURE_OPENAI_API_VERSION=2024-12-01-preview
+
 # Getting started
 Sign up for the OpenAI API at https://platform.openai.com/
 - Tier 0: The free trial provides limited use of the model gpt-4o-mini.
@@ -134,6 +141,9 @@ You can add the desired models to the file public/index.html.
   <option value="o1">o1</option>
   <option value="o1-preview">o1-preview</option>
   <option value="gpt-4-32k-0314">gpt-4-32k-0314</option>
+  <option value="text-embedding-3-large">text-embedding-3-large</option>
+  <option value="text-embedding-3-small">text-embedding-3-small</option>
+  <option value="text-embedding-ada-002">text-embedding-ada-002</option>
   <option value="deepseek-chat">deepseek-chat (deepseek-v3)</option>
   <option value="deepseek-reasoner">deepseek-reasoner (deepseek-r1)</option>
 </select>

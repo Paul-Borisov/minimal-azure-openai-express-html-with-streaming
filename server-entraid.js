@@ -8,6 +8,7 @@ const express = require("express");
 const cors = require("cors");
 const { AzureOpenAI, OpenAI } = require("openai");
 const { generateCompletionsStream } = require("./stream-completions");
+const { generateEmbedding } = require("./text-embeddings");
 const {
   DefaultAzureCredential,
   getBearerTokenProvider,
@@ -35,7 +36,7 @@ const apiKey = process.env["OPENAI_API_KEY"];
 const openai = new OpenAI({ apiKey });
 
 const deepSeekApiKey = process.env["DEEPSEEK_API_KEY"];
-const deepSeek = deepSeekApiKey ? new OpenAI({baseURL: 'https://api.deepseek.com', apiKey }) : undefined;
+const deepSeek = deepSeekApiKey ? new OpenAI({baseURL: "https://api.deepseek.com", apiKey: deepSeekApiKey }) : undefined;
 
 const app = express();
 app.use(express.json());
@@ -51,7 +52,7 @@ app.get("/", async (req, res) => {
 app.post("/api/azureopenai/chat", async (req, res) => {
   // In order to test keyless authentication for Azure OpenAI locally, do the following:
   // 1. Open the Azure OpenAI resource (instance), select "Access Control (IAM)", add the role "Cognitive Services OpenAI User" to the test account
-  // 2. Signin with az login using your test account
+  // 2. Signin with az login using your test account: az login --scope https://cognitiveservices.azure.com/.default
   // 3. Comment out the line AZURE_OPENAI_API_KEY=... in .env
   // 4. Start the server using the command node server-entraid.js. The keyless auth should work.
   const credential = new DefaultAzureCredential();
@@ -68,14 +69,30 @@ app.post("/api/azureopenai/chat", async (req, res) => {
   generateCompletionsStream(req, res, azOpenai, systemInstructions, streaming);
 });
 
+// The endpoint to get results from Azure OpenAI
+app.post("/api/azureopenai/embeddings", async (req, res) => {
+  const azOpenai = new AzureOpenAI({
+    apiVersion,
+    endpoint,
+    deployment: req.body.model ?? defaultDeployment,
+    azureADTokenProvider,
+  });
+  generateEmbedding(req, res, azOpenai);
+});
+
 // The endpoint to get results from regular OpenAI
 app.post("/api/openai/chat", async (req, res) =>
   generateCompletionsStream(req, res, openai, systemInstructions, streaming)
 );
 
+// The endpoint to get results from regular OpenAI
+app.post("/api/openai/embeddings", async (req, res) =>
+  generateEmbedding(req, res, openai)
+);
+
 if(deepSeek) {
   // The endpoint to get results from DeekSeek
-  app.post("/api/deekseek/chat", async (req, res) =>
+  app.post("/api/deepseek/chat", async (req, res) =>
     generateCompletionsStream(req, res, deepSeek, systemInstructions, streaming)
   );
 }

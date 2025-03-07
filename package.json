@@ -1,6 +1,6 @@
 {
   "name": "openai-stream",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",

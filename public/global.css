@@ -109,6 +109,10 @@ p, hr {
   width: 70vw;
   max-width: 70vw;
 }
+.code-container .language-embeddings {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
 
 button:disabled {
   background-color:#adadad;

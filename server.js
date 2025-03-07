@@ -5,6 +5,7 @@ const express = require("express");
 const cors = require("cors");
 const { AzureOpenAI, OpenAI } = require("openai");
 const { generateCompletionsStream } = require("./stream-completions");
+const { generateEmbedding } = require("./text-embeddings");
 const path = require("path");
 const os = require("os");
 require("dotenv").config();
@@ -51,16 +52,31 @@ app.post("/api/azureopenai/chat", async (req, res) => {
   generateCompletionsStream(req, res, azOpenai, systemInstructions, streaming);
 });
 
+// The endpoint to get results from Azure OpenAI
+app.post("/api/azureopenai/embeddings", async (req, res) => {
+  const azOpenai = new AzureOpenAI({
+    endpoint,
+    azureApiKey,
+    apiVersion,
+    deployment: req.body.model ?? defaultDeployment,
+  });
+  generateEmbedding(req, res, azOpenai);
+});
+
 // The endpoint to get results from regular OpenAI
 app.post("/api/openai/chat", async (req, res) =>
   generateCompletionsStream(req, res, openai, systemInstructions, streaming)
 );
 
+// The endpoint to get results from regular OpenAI
+app.post("/api/openai/embeddings", async (req, res) =>
+  generateEmbedding(req, res, openai)
+);
+
 if(deepSeek) {
   // The endpoint to get results from DeekSeek
-  app.post("/api/deepseek/chat", async (req, res) => {
-      return generateCompletionsStream(req, res, deepSeek, systemInstructions, streaming)
-    }
+  app.post("/api/deepseek/chat", async (req, res) =>
+    generateCompletionsStream(req, res, deepSeek, systemInstructions, streaming)
   );
 }
 
