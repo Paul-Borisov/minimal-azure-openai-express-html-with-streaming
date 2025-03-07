@@ -1,0 +1,14 @@
+# Builds a full-scale compact image of 297.47 MB
+FROM node:22-alpine
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm i --omit=dev
+
+COPY . .
+
+EXPOSE 3000
+
+CMD ["node", "server.js"]
