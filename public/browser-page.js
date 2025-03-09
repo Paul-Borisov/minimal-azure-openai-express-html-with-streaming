@@ -11,6 +11,7 @@
   const openAiIcon = decodeURIComponent(document.querySelector("head #favicon").getAttribute("href").replace("data:image/svg+xml,",""));
   let model = selectedModel.selectedOptions[0].value;
   let abortController = new AbortController();
+  let audioStreamingManager = null;
 
   const thinkingHeader = `<span class="gradient-text">Thinking...</span>`;
   
@@ -85,6 +86,7 @@
   const handleStop = () => {
     document.querySelectorAll(".text button").forEach(btn => btn.removeAttribute("disabled"));
     btnAbort.classList.add("invisible");
+    if(audioStreamingManager?.isProcessing) audioStreamingManager.stopPlayback();
   };
 
   const handleNextPrompt = (type) => { // type = "text", type = "code"
@@ -142,6 +144,7 @@
     btnSend.click();
   });
   
+  const isAudioModel = (model) => /audio/i.test(model);
   const isEmbeddingModel = (model) => /embedding/i.test(model);
 
   async function processRequest(content, model) {
@@ -155,6 +158,16 @@
       }
     }
     if (!endpoint) endpoint = targetEndpoints["default"];
+
+    const isAudio = isAudioModel(model);
+    const isAudioSegment = (line) => isAudio && line && (/^data: <!--/i.test(line) || !/^data: /i.test(line));
+    const getAudioSegment = (line) => isAudioSegment(line) ? line.replace(/^data: <!--/i,"").replace(/-->$/,"") : null;
+    if(isAudio) {
+      audioStreamingManager = new AudioStreamingManager(abortController, handleStop);
+      await audioStreamingManager.initialize();
+    } else {
+      audioStreamingManager = null;
+    }
 
     let endpointUri;
     const isEmbedding = isEmbeddingModel(model);
@@ -233,8 +246,27 @@
 
         const lines = chunkValue.split("\r");
 
+        let residue = "";
         for (const line of lines) {
           //if (line.includes("Roman")) throw "Custom error";
+          if(isAudioSegment(line)) {
+            const audioSegment = getAudioSegment(line);
+            if(audioSegment) {
+              window.audio = window.audio || [];
+              window.audio.push(audioSegment);
+              try {
+                const encoded = audioStreamingManager.base64ToFloat32Array(residue + audioSegment);
+                residue = "";
+                await audioStreamingManager.addBuffer(encoded);
+              } catch(e) {
+                if(residue) {
+                  console.log(e.message, audioSegment.substring(audioSegment.length-10));
+                }
+                residue += audioSegment;
+              }
+            }
+            continue;
+          }         
           const msg = line.replace("data: ", "");
           if(rawOutput.length === 2 && rawOutput[0] === thinkingHeader) {
             // Removes the leading thinkingHeader when the streaming output or fallback has been started.
@@ -243,7 +275,7 @@
           if (msg === "[DONE]") {
             //throw new Error("Custom error!"); // Uncomment this line, click Clear followed by Send
             done = true;
-            handleStop();
+            if(!audioStreamingManager?.isProcessing) handleStop();
             // Clean up thinkingHeaders from the content before saving to chatHistory
             // Removes the trailing thinkingHeader when the fallback has been completed.
             let thinkingHeaderRemoved = false;

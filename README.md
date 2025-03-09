@@ -64,6 +64,9 @@ Bugs fixed:
   - text-embedding-ada-002, default dimensions (1536)
 - Updated .env.example to the newer AZURE_OPENAI_API_VERSION=2024-12-01-preview
 
+**March 9, 2025, v1.0.11**
+- Added gpt-4o-audio-preview and gpt-4o-mini-audio-preview with streaming voice output
+
 # Getting started
 Sign up for the OpenAI API at https://platform.openai.com/
 - Tier 0: The free trial provides limited use of the model gpt-4o-mini.

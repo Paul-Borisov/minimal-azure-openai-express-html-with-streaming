@@ -28,7 +28,17 @@ async function generateCompletionsStream(
     return;
   }
 
-  res.setHeader("Content-Type", streaming ? "text/event-stream": "application/json");
+  const isAudio = /audio/i.test(model);
+  const additionalProperties = isAudio ? {
+    modalities: ["text", "audio"],
+    audio: {
+      // https://platform.openai.com/playground/chat?models=gpt-4o-audio-preview
+      voice: "verse",
+      format: "pcm16",
+    }
+  } : null;
+
+  res.setHeader("Content-Type", streaming && !isAudio ? "text/event-stream": "application/json");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
 
@@ -36,6 +46,23 @@ async function generateCompletionsStream(
     role: model.startsWith("o1") ? "assistant" : "system",
     content: systemInstructions,
   };
+
+  const parseOutput = (part) => {
+    if(part.choices[0]?.delta) {
+      if(part.choices[0]?.delta.audio) {
+        return part.choices[0].delta.audio.transcript 
+          || (part.choices[0].delta.audio.data ? `<!--${part.choices[0].delta.audio.data}-->` : "");
+      } else {
+        return part.choices[0]?.delta?.content || "";
+      }
+    }
+
+    if(part.choices[0]?.message?.audio) {
+      return `${part.choices[0].message.audio.transcript}\rdata: ${part.choices[0].message.audio.data ? `<!--${part.choices[0].message.audio.data}-->` : ""}`;
+    } else {
+      return part.choices[0].message.content || "";
+    }
+  }
 
   const onEnd = () => {
     res.write("data: [DONE]");
@@ -55,9 +82,11 @@ async function generateCompletionsStream(
       openaiClient,
       onEnd,
       onError,
+      parseOutput,
       model,
       system,
       messages,
+      additionalProperties
     });    
   };
   res.write(`data: ${thinkingHeader}\r`);
@@ -71,17 +100,17 @@ async function generateCompletionsStream(
       model,
       messages: [system, ...messages],
       stream: true,
+      ...additionalProperties
     });
     //throw {code: "unsupported_value", param: "stream"}; // Uncomment this line to test the error condition on the unsupported streaming output.
     if (isIterable(completion)) {
       for await (const part of completion) {
-        const content = part.choices[0]?.delta?.content || "";
-        if (content) {
-          res.write(`data: ${content}\r`);
-        }
+        const content = parseOutput(part);
+        res.write(`data: ${content}\r`);
       }
     } else {
-      res.write(`data: ${completion.choices[0].message.content}\r`);
+      const content = parseOutput(completion);
+      res.write(`data: ${content}\r`);
     }
     onEnd();
   } catch (error) {
@@ -103,17 +132,21 @@ async function fallBackGenerateCompletionsWithNoStreaming({
   openaiClient,
   onEnd,
   onError,
+  parseOutput,
   model,
   system,
   messages,
+  additionalProperties
 }) {
   try {
     const completion = await openaiClient.chat.completions.create({
       model,
       messages: [system, ...messages],
       stream: false,
+      ...additionalProperties
     });
-    res.write(`data: ${completion.choices[0].message.content}\r`);
+    const content = parseOutput(completion);
+    res.write(`data: ${content}\r`);
     onEnd();
   } catch (error) {
     onError(error);
