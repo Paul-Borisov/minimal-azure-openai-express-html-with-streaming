@@ -48,6 +48,7 @@ async function generateCompletionsStream(
   };
 
   const parseOutput = (part) => {
+    if(!part?.choices?.length) return "";
     if(part.choices[0]?.delta) {
       if(part.choices[0]?.delta.audio) {
         return part.choices[0].delta.audio.transcript 
