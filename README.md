@@ -67,6 +67,9 @@ Bugs fixed:
 **March 9, 2025, v1.0.11**
 - Added gpt-4o-audio-preview and gpt-4o-mini-audio-preview with streaming voice output
 
+**March 17, 2025, v1.0.12**
+- Added gpt-4o-mini-search-preview and gpt-4o-search-preview with out-of-the-box internet search
+
 # Getting started
 Sign up for the OpenAI API at https://platform.openai.com/
 - Tier 0: The free trial provides limited use of the model gpt-4o-mini.
