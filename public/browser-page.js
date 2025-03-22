@@ -44,7 +44,7 @@
     //"4o": "azureopenai",
     //"o1": "openai",
     //"o1-mini": "azureopenai",
-    "o3-mini": "azureopenai",
+    //"o3-mini": "azureopenai",
     //"embedding": "azureopenai",
     //"gpt-4o-audio-preview": "azureopenai",
     "deepseek": "deepseek",
