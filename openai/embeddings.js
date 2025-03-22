@@ -1,4 +1,4 @@
-const {onEnd, onError, thinkingHeader} = require("./shared");
+const { onEnd, onError, thinkingHeader } = require("./shared");
 
 async function generateEmbedding(
   req,

@@ -1,4 +1,4 @@
-const { isFirstResponse, isIterable, isStreamUnsupported, onEnd, onError, thinkingHeader } = require("./shared");
+const { isFirstResponse, isIterable, isStreamUnsupported, isText, onEnd, onError, thinkingHeader } = require("./shared");
 
 /**
  * A generic function to handle streaming responses.
@@ -41,11 +41,11 @@ async function handleStream({
     if (isIterable(streamResponse)) {
       for await (const part of streamResponse) {
         const content = parseOutput(part);
-        if(typeof content !== "undefined") res.write(`data: ${content}\r`);
+        if(isText(content)) res.write(`data: ${content}\r`);
       }
     } else {
       const content = parseOutput(streamResponse);
-      if(typeof content !== "undefined") res.write(`data: ${content}\r`);
+      if(isText(content)) res.write(`data: ${content}\r`);
     }
     onEnd(res);
   } catch (error) {

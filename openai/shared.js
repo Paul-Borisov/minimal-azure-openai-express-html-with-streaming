@@ -9,6 +9,8 @@ const isFirstResponse = (messages) => {
 
 const isIterable = (obj) => typeof obj?.iterator === "function";
 
+const isText = (content) => typeof content === "string";
+
 const isStreamUnsupported = (error) =>
   error?.code === "unsupported_value" && error?.param === "stream";
 
@@ -29,6 +31,7 @@ const thinkingHeader = `<span class="gradient-text">Thinking...</span>`;
 module.exports = {
   isFirstResponse,
   isIterable,
+  isText,
   isStreamUnsupported,
   onEnd,
   onError,

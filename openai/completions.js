@@ -1,5 +1,5 @@
 const { handleStream } = require("./streaming");
-const { onEnd, onError } = require("./shared");
+const { isText, onEnd, onError } = require("./shared");
 
 async function generateCompletionsStream(req, res, openaiClient, systemInstructions, streaming) {
   const messages = req.body.messages;
@@ -74,7 +74,7 @@ async function generateCompletionsStream(req, res, openaiClient, systemInstructi
         ...additionalProperties,
       });
       const content = parseOutput(completion);
-      if(typeof content !== "undefined") res.write(`data: ${content}\r`);
+      if(isText(content)) res.write(`data: ${content}\r`);
       onEnd(res);
     } catch (error) {
       onError(error, res);

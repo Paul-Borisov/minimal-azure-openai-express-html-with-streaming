@@ -1,16 +1,19 @@
 # Overview
 
-This is an educational OpenAI project that I developed for my colleagues to demonstrate the use of streaming outputs with regular OpenAI and Azure OpenAI clients.
+This is a minimal Express.js server with a simple-to-use web client that works with Azure OpenAI and OpenAI endpoints.
 
-This project highlights:
+Current version supports the API of /v1/responses and classic /v1/chat/completions as well as streaming audio and DeepSeek models.
 
-- The use of streaming outputs in OpenAI and Azure OpenAI.
-- A clear, visually noticeable difference in streaming performance between the older gpt-4o-mini / gpt-4o and the newer o1-mini / o1-preview language models.
-- Testing keyless Entra ID authentication in Azure OpenAI.
-- The ability to cancel an ongoing streaming request using the **Stop** button.
+The server can be started quickly in VSCode and in the local docker container. I host the server on the Azure Container App.
+
+This server supports:
+
+- Key and keyless Entra ID authentication for Azure OpenAI.
+- The use of streaming outputs in OpenAI and Azure OpenAI, cancelling the streaming request with the **Stop** button.
 - Options to formatting AI outputs for code blocks and markdown content.
 - Working with chat history context. Samples for code generations and text prompts.
 - Error handling and fallback logic to plain request handling when the streaming option is not supported by the selected language model.
+- Handling of OpenAI audio streaming.
 
 Technical stack:
 
