@@ -44,7 +44,7 @@
     //"4o": "azureopenai",
     //"o1": "openai",
     //"o1-mini": "azureopenai",
-    //"o3-mini": "azureopenai",
+    "o3-mini": "azureopenai",
     //"embedding": "azureopenai",
     //"gpt-4o-audio-preview": "azureopenai",
     "deepseek": "deepseek",
@@ -60,7 +60,7 @@
     //"gpt-3.5-turbo",      // supports both, responses and chat API
     //"o1",                 // o1 was working much slower on responses API
     "o1-pro",               // o1-pro only supported responses APi; it did not support chat API
-    //"o3-mini",            // o3-mini was working much slower; o1-mini and o1-preview did not support responses API
+    "o3-mini",            // o3-mini was working much slower; o1-mini and o1-preview did not support responses API
   ];
 
   const samples = [
@@ -308,7 +308,7 @@
             if(!audioStreamingManager?.isProcessing) handleStop();
             // Clean up thinkingHeaders from the content before saving to chatHistory
             // Removes the trailing thinkingHeader when the fallback has been completed.
-            let thinkingHeaderRemoved = false;
+            let thinkingHeaderRemoved = rawOutput.length === 0;
             rawOutput.forEach((entry,index) => {
               if(entry.includes(thinkingHeader)) {
                 rawOutput[index] = entry.replace(thinkingHeader,"");
