@@ -19,6 +19,54 @@ Technical stack:
 
 ### Updates and bug fixes:
 
+**March 22, 2025, v1.1.0**
+- Revised the logic
+- Added support for the API of **/v1/responses**
+- Added two models **o1-pro** and **computer-use-preview**
+  - These two models could only use /v1/responses. They did not support classic /v1/chat/completions
+  - o1-pro worked slow, and it's the most expensive if compared with other models.
+- Changed handling for the models gpt-4.5-preview and gpt-4o (full) to use the new API of /v1/responses
+  - /v1/responses can be enabled for other models by adding them to the array public/browser-page.js > modelsThatSupportResponses
+  - Other models that supported /v1/responses: 
+    - gpt-4o-mini
+    - gpt-4-32k-0314
+    - gpt-3.5-turbo
+    - o1
+    - o3-mini
+  - Models that did not support /v1/responses: 
+    - o1-mini
+    - o1-preview
+
+**March 17, 2025, v1.0.12**
+- Added gpt-4o-mini-search-preview and gpt-4o-search-preview with out-of-the-box internet search
+
+**March 9, 2025, v1.0.11**
+- Added gpt-4o-audio-preview and gpt-4o-mini-audio-preview with streaming voice output
+
+**March 7, 2025, v1.0.10**
+- Added three embedding models
+  - text-embedding-3-large, 3072 dimensions
+  - text-embedding-3-small, 1536 dimensions
+  - text-embedding-ada-002, default dimensions (1536)
+- Updated .env.example to the newer AZURE_OPENAI_API_VERSION=2024-12-01-preview
+
+**March 4, 2025, v1.0.9**
+- Added optional support for deepseek-chat and deepseek-reasoner models that correspond to DeepSeek V3 and DeepSeek R1 accordingly.
+- To enable them, sign up to https://platform.deepseek.com/, create an API key and deposit min 2$.
+- Update DEEPSEEK_API_KEY with your API key. Now, you can start using DeepSeek models within this web app.
+
+**March 1, 2025, v1.0.8**
+- Added gpt-4.5-preview.
+
+**February 15, 2025, v1.0.6**
+- The streaming option appeared in the full-scale o1 models.
+- Added gradient header text, **Thinking...**, which is visible while the model is not streaming or does not support streaming output.
+- Added the ability to freeze automatic scrolling if the user's scroll position is not at the bottom of the text.
+
+**February 9, 2025, v1.0.5**
+- Added user interface support for mobile devices.
+- Added a Dockerfile for deployment to containers.
+
 **February 8, 2025, v1.0.4**
 - Default configuration does not require Azure OpenAI. Use your regular OpenAI endpoints and explicitly configure specific ones to be handled by Azure OpenAI. Colleagues commented that they did not have access to Azure OpenAI outside Microsoft environment.
 - Added o3-mini, o1, o1-2024-12-17, gpt-3.5-turbo, and gpt-4-32k-0314 to available default selections. You can add more models to index.html.
@@ -39,36 +87,6 @@ Bugs fixed:
 - The experimental switch of node **--watch** caused infinite loops occasionally. For instance, when I used **npm run dev** on the first load. 
   - I replaced node --watch with the old good nodemon. Now **npm run dev** can be used for the dynamic reloads on file updates.
 - Azure OpenAI used default model deployment for different model selections. I moved the logic to the route handler.
-
-**February 9, 2025, v1.0.5**
-- Added user interface support for mobile devices.
-- Added a Dockerfile for deployment to containers.
-
-**February 15, 2025, v1.0.6**
-- The streaming option appeared in the full-scale o1 models.
-- Added gradient header text, **Thinking...**, which is visible while the model is not streaming or does not support streaming output.
-- Added the ability to freeze automatic scrolling if the user's scroll position is not at the bottom of the text.
-
-**March 1, 2025, v1.0.8**
-- Added gpt-4.5-preview.
-
-**March 4, 2025, v1.0.9**
-- Added optional support for deepseek-chat and deepseek-reasoner models that correspond to DeepSeek V3 and DeepSeek R1 accordingly.
-- To enable them, sign up to https://platform.deepseek.com/, create an API key and deposit min 2$.
-- Update DEEPSEEK_API_KEY with your API key. Now, you can start using DeepSeek models within this web app.
-
-**March 7, 2025, v1.0.10**
-- Added three embedding models
-  - text-embedding-3-large, 3072 dimensions
-  - text-embedding-3-small, 1536 dimensions
-  - text-embedding-ada-002, default dimensions (1536)
-- Updated .env.example to the newer AZURE_OPENAI_API_VERSION=2024-12-01-preview
-
-**March 9, 2025, v1.0.11**
-- Added gpt-4o-audio-preview and gpt-4o-mini-audio-preview with streaming voice output
-
-**March 17, 2025, v1.0.12**
-- Added gpt-4o-mini-search-preview and gpt-4o-search-preview with out-of-the-box internet search
 
 # Getting started
 Sign up for the OpenAI API at https://platform.openai.com/
@@ -131,17 +149,22 @@ As of December 1, 2024, o1-models are not yet publicly available in Azure OpenAI
 
 - o1-preview
 - o1-mini
-  - Update: this model appeared in Azure OpenAI as of Jan, 2025. 
-  - However, it had the reduced functionality if compared with its OpenAI sibling. For instance, it did not support streaming.
+  - Update: this model appeared in Azure OpenAI as of Jan, 2025. Its streaming option was enabled in March 2025.
 
 You can add the desired models to the file public/index.html.
 
 ```html
 <select class="model">
+  <option value="o1-pro">o1-pro (warning: the most expensive model)</option>
+  <option value="computer-use-preview">computer-use-preview</option>
+  <option value="gpt-4o-mini-search-preview">gpt-4o-mini-search-preview</option>
+  <option value="gpt-4o-search-preview">gpt-4o-search-preview</option>
   <option value="gpt-4.5-preview">gpt-4.5-preview</option>
+  <option value="gpt-4o-audio-preview">gpt-4o-audio-preview (warning: loud voice out)</option>
+  <option value="gpt-4o-mini-audio-preview">gpt-4o-mini-audio-preview (warning: loud voice out)</option>
   <option value="gpt-4o">gpt-4o</option>
-  <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
   <option value="gpt-4o-mini" selected="true">gpt-4o-mini</option>
+  <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
   <option value="o3-mini">o3-mini (tier 3+ required)</option>
   <option value="o1-mini">o1-mini</option>
   <option value="o1">o1</option>
@@ -152,7 +175,7 @@ You can add the desired models to the file public/index.html.
   <option value="text-embedding-ada-002">text-embedding-ada-002</option>
   <option value="deepseek-chat">deepseek-chat (deepseek-v3)</option>
   <option value="deepseek-reasoner">deepseek-reasoner (deepseek-r1)</option>
-</select>
+  </select>
 ```
 
 You can also change target endpoint routings - to azureopenai or openai - at the header of public/browser-page.js (public/browser-console.js for the console client).
@@ -165,9 +188,30 @@ You can reconfigure specific models to be handled by Azure OpenAI and/or the reg
 const targetEndpoints = {
   //"4o": "azureopenai",
   //"o1": "openai",
+  //"o1-mini": "azureopenai",
+  //"o3-mini": "azureopenai",
+  //"embedding": "azureopenai",
+  //"gpt-4o-audio-preview": "azureopenai",
   "deepseek": "deepseek",
-  "default": "openai"
+  "default": "openai",
 };
+```
+
+By default, text models use the classic API endpoint /v1/chat/completions
+You can configure specific models to use the newer /v1/responses. Add them into the array of **modelsThatSupportResponses**
+
+```javascript
+const modelsThatSupportResponses = [ // As of March 22, 2025
+  "computer-use-preview", // computer-use-preview only supported responses APi; it did not support chat API
+  "gpt-4.5-preview",      // supports both, responses and chat API
+  "gpt-4o",               // supports both, responses and chat API
+  //"gpt-4o-mini",        // supports both, responses and chat API
+  //"gpt-4-32k-0314",     // supports both, responses and chat API
+  //"gpt-3.5-turbo",      // supports both, responses and chat API
+  //"o1",                 // o1 was working much slower on responses API
+  "o1-pro",               // o1-pro only supported responses APi; it did not support chat API
+  //"o3-mini",            // o3-mini was working much slower; o1-mini and o1-preview did not support responses API
+];
 ```
 
 ### User interface with streaming output, which consumes data from the server

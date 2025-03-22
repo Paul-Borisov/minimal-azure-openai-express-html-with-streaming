@@ -1,4 +1,4 @@
-const thinkingHeader = `<span class="gradient-text">Thinking...</span>`;
+const {onEnd, onError, thinkingHeader} = require("./shared");
 
 async function generateEmbedding(
   req,
@@ -18,18 +18,6 @@ async function generateEmbedding(
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
 
-  const onEnd = () => {
-    res.write("data: [DONE]");
-    res.end();
-  };
-
-  const onError = (error) => {
-    console.error("Error:", error);
-    res.write("data: [ERROR]\r");
-    res.write(`data:  ${error.message || ""}`);
-    res.end();
-  };
-
   res.write(`data: ${thinkingHeader}\r`);
   try {
     const embeddings = await openaiClient.embeddings.create({
@@ -39,9 +27,9 @@ async function generateEmbedding(
       encoding_format: "float",
     });
     res.write(`data: ${JSON.stringify(embeddings.data[0].embedding)}\r`);
-    onEnd();
+    onEnd(res);
   } catch (error) {
-    onError(error);
+    onError(error, res);
   }
 }
 

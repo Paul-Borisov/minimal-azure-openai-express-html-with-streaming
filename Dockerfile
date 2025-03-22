@@ -9,6 +9,7 @@ RUN npm i --omit=dev
 
 COPY . .
 
+# https://github.com/GoogleContainerTools/distroless?tab=readme-ov-file#what-images-are-available
 FROM gcr.io/distroless/nodejs22-debian12:nonroot
 COPY --from=build /app /app
 COPY --from=build /bin/ /bin/

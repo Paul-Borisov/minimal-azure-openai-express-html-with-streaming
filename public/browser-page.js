@@ -51,6 +51,18 @@
     "default": "openai",
   };
 
+  const modelsThatSupportResponses = [ // As of March 22, 2025
+    "computer-use-preview", // computer-use-preview only supported responses APi; it did not support chat API
+    "gpt-4.5-preview",      // supports both, responses and chat API
+    "gpt-4o",               // supports both, responses and chat API
+    //"gpt-4o-mini",        // supports both, responses and chat API
+    //"gpt-4-32k-0314",     // supports both, responses and chat API
+    //"gpt-3.5-turbo",      // supports both, responses and chat API
+    //"o1",                 // o1 was working much slower on responses API
+    "o1-pro",               // o1-pro only supported responses APi; it did not support chat API
+    //"o3-mini",            // o3-mini was working much slower; o1-mini and o1-preview did not support responses API
+  ];
+
   const samples = [
     {code: "Generate javascript regex to replace empty values with '-' in the 3rd field of comma separated rows"},
     {code: "Add handling of tab-separators to the code"},
@@ -152,6 +164,7 @@
     lastScrollTop = 0;
     freezeAutoScroll = false;
     let endpoint;
+    let modelSupportsResponses = modelsThatSupportResponses.some(e => e === model.toLocaleLowerCase());
     for (const key of Object.keys(targetEndpoints)) {
       if (model.includes(key)) {
         endpoint = targetEndpoints[key];
@@ -174,6 +187,8 @@
     const isEmbedding = isEmbeddingModel(model);
     if(isEmbedding) {
       endpointUri = `${window.location.origin}/api/${endpoint}/embeddings`;
+    } else if (modelSupportsResponses) {
+      endpointUri = `${window.location.origin}/api/${endpoint}/responses`;
     } else {
       endpointUri = `${window.location.origin}/api/${endpoint}/chat`;
     }

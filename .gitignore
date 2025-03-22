@@ -3,3 +3,4 @@
 # local env files
 .env
 deploy*
+local/
