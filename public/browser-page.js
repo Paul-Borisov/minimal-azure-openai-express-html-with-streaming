@@ -60,7 +60,7 @@
     //"gpt-3.5-turbo",      // supports both, responses and chat API
     //"o1",                 // o1 was working much slower on responses API
     "o1-pro",               // o1-pro only supported responses APi; it did not support chat API
-    "o3-mini",            // o3-mini was working much slower; o1-mini and o1-preview did not support responses API
+    //"o3-mini",            // o3-mini was working much slower; o1-mini and o1-preview did not support responses API
   ];
 
   const samples = [
