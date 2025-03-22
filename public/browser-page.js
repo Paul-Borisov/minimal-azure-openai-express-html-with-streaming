@@ -159,6 +159,18 @@
   
   const isAudioModel = (model) => /audio/i.test(model);
   const isEmbeddingModel = (model) => /embedding/i.test(model);
+  const handleErrorOutput = (trailingHtml) => {
+    if(root.innerHTML.includes(thinkingHeader)) {
+      root.innerHTML = root.innerHTML.replace(thinkingHeader, trailingHtml);
+    } else {
+      const response = root.querySelector(".response:last-child div:last-child");
+      if(response) {
+        response.innerHTML += trailingHtml;
+      } else {
+        root.innerHTML += trailingHtml;
+      }
+    }
+  }
 
   async function processRequest(content, model) {
     lastScrollTop = 0;
@@ -227,7 +239,9 @@
       }
 
       if (!res.ok) {
-        throw new Error("Network response was not ok");
+        if(!root.innerHTML.length) root.innerHTML += " ";
+        const errorMessage = `${res.status}, ${res.statusText ? res.statusText : "Network response was not ok"} `;
+        throw new Error(errorMessage);
       }
 
       const reader = res.body.getReader();
@@ -328,18 +342,6 @@
     } catch (error) {
       console.error("Error:", error);
       if (root.innerHTML.length > 0 && root.innerHTML !== "[ERROR]") {
-        const handleErrorOutput = (trailingHtml) => {
-          if(root.innerHTML.includes(thinkingHeader)) {
-            root.innerHTML = root.innerHTML.replace(thinkingHeader, trailingHtml);
-          } else {
-            const response = root.querySelector(".response:last-child div:last-child");
-            if(response) {
-              response.innerHTML += trailingHtml;
-            } else {
-              root.innerHTML += trailingHtml;
-            }
-          }
-        }
         if (error.toString().startsWith("AbortError")) {
           handleErrorOutput("<b>Cancelled!</b>")
         } else {

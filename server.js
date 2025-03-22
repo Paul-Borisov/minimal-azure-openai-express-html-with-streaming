@@ -14,34 +14,17 @@
 */
 const express = require("express");
 const cors = require("cors");
-const { AzureOpenAI, OpenAI } = require("openai");
+const { OpenAI } = require("openai");
 const { generateCompletionsStream } = require("./openai/completions");
 const { generateResponsesStream } = require("./openai/responses");
 const { generateEmbedding } = require("./openai/embeddings");
 const path = require("path");
 const os = require("os");
 require("dotenv").config();
+const {isAzureOpenAiSupported, createAzureOpenAI} = require("./openai/azureOpenAI");
 
 const systemInstructions = process.env["SYSTEM_INSTRUCTIONS"];
-
-// Parameters for Azure OpenAI
-const endpoint = process.env["AZURE_OPENAI_ENDPOINT"];
-const apiVersion = process.env["AZURE_OPENAI_API_VERSION"];
-const defaultDeployment = process.env["AZURE_OPENAI_API_DEPLOYMENT"];
 const streaming = !/true|1|yes/i.test(process.env["NO_STREAMING"]);
-
-// Determine authentication mode for Azure OpenAI:
-// - Use AZURE_AUTH_MODE env variable if provided.
-// - Otherwise, default to "key" if AZURE_OPENAI_API_KEY is set, else "keyless".
-const azureAuthMode =
-  process.env["AZURE_AUTH_MODE"] ||
-  (process.env["AZURE_OPENAI_API_KEY"] ? "key" : "keyless");
-
-if (azureAuthMode === "key" && !process.env["AZURE_OPENAI_API_KEY"]) {
-  throw new Error("AZURE_OPENAI_API_KEY must be present for key authentication");
-} else if (azureAuthMode === "keyless" && process.env["AZURE_OPENAI_API_KEY"]) {
-  throw new Error("AZURE_OPENAI_API_KEY must be commented out for keyless authentication");
-}
 
 // Parameters for regular OpenAI, https://github.com/openai/openai-node
 const apiKey = process.env["OPENAI_API_KEY"];
@@ -63,46 +46,6 @@ app.get("/", (_, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// Unified helper function for creating AzureOpenAI instance
-const createAzureOpenAI = (req) => {
-  if (azureAuthMode === "key") {
-    return new AzureOpenAI({
-      endpoint,
-      azureApiKey: process.env["AZURE_OPENAI_API_KEY"],
-      apiVersion,
-      deployment: req.body.model ?? defaultDeployment,
-    });
-  } else {
-    // Keyless authentication using Entra ID.
-    const { DefaultAzureCredential, getBearerTokenProvider } = require("@azure/identity");
-    const credential = new DefaultAzureCredential();
-    const scope = "https://cognitiveservices.azure.com/.default";
-    const azureADTokenProvider = getBearerTokenProvider(credential, scope);
-    return new AzureOpenAI({
-      apiVersion,
-      endpoint,
-      deployment: req.body.model ?? defaultDeployment,
-      azureADTokenProvider,
-    });
-  }
-};
-
-// Endpoints for Azure OpenAI
-app.post("/api/azureopenai/chat", async (req, res) => {
-  const azOpenai = createAzureOpenAI(req);
-  await generateCompletionsStream(req, res, azOpenai, systemInstructions, streaming);
-});
-
-app.post("/api/azureopenai/responses", async (req, res) => {
-  const azOpenai = createAzureOpenAI(req);
-  await generateResponsesStream(req, res, azOpenai, systemInstructions, streaming);
-});
-
-app.post("/api/azureopenai/embeddings", async (req, res) => {
-  const azOpenai = createAzureOpenAI(req);
-  await generateEmbedding(req, res, azOpenai);
-});
-
 // Endpoints for regular OpenAI
 app.post("/api/openai/chat", async (req, res) =>
   await generateCompletionsStream(req, res, openai, systemInstructions, streaming)
@@ -113,6 +56,24 @@ app.post("/api/openai/responses", async (req, res) =>
 app.post("/api/openai/embeddings", async (req, res) =>
   await generateEmbedding(req, res, openai)
 );
+
+// Endpoints for Azure OpenAI
+if( isAzureOpenAiSupported ) {
+  app.post("/api/azureopenai/chat", async (req, res) => {
+    const azOpenai = createAzureOpenAI(req);
+    await generateCompletionsStream(req, res, azOpenai, systemInstructions, streaming);
+  });
+
+  app.post("/api/azureopenai/responses", async (req, res) => {
+    const azOpenai = createAzureOpenAI(req);
+    await generateResponsesStream(req, res, azOpenai, systemInstructions, streaming);
+  });
+
+  app.post("/api/azureopenai/embeddings", async (req, res) => {
+    const azOpenai = createAzureOpenAI(req);
+    await generateEmbedding(req, res, azOpenai);
+  });
+}
 
 // Endpoint for DeepSeek (if configured)
 if (deepSeek) {

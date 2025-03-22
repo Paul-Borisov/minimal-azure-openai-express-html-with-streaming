@@ -1,13 +1,16 @@
-# Builds a compact image of 265.76 MB
+# Builds a compact image of 276.84 MB
 FROM node:22-alpine AS build
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY package*.json .
 
 RUN npm i --omit=dev
 
 COPY . .
+
+RUN rm Dockerfile*
+RUN rm package*
 
 # https://github.com/GoogleContainerTools/distroless?tab=readme-ov-file#what-images-are-available
 FROM gcr.io/distroless/nodejs22-debian12:nonroot
