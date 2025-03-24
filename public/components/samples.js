@@ -8,7 +8,7 @@ export const samples = [
   { text: "Alice has 3 sisters and 5 brothers. How many sisters and brothers Alice's brother has?" },
   { text: "There are 3 killers in a room. A regular person enters the room and kills one of the killers. How many killers are in the room?" },
   { text: "Generate CSV-table for all weeks of 2025. Columns: WeekNumber, StartDate;, EndDate. Use semicolon as column delimiter and ISO-date format. Start day is Monday. End day is Friday. Wrap into ```" },
-  { default: "Generate test response of 100 characters" },
+  { default: "Generate test response of 100 characters" }
 ];
 
 export function setInitialText(txtPrompt) {

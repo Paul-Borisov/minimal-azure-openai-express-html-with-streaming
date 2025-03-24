@@ -65,5 +65,5 @@ initEventHandlers({
   handleStart,
   handleStop,
   chatHistory,
-  modelRef,
+  modelRef
 });

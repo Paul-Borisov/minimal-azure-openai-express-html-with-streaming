@@ -14,8 +14,8 @@ export function initScrollListener(root) {
 }
 
 export function resetScroll() {
-  let lastScrollTop = 0;
-  let freezeAutoScroll = false;
+  lastScrollTop = 0;
+  freezeAutoScroll = false;
 }
 
 export function scrollDown(root) {
