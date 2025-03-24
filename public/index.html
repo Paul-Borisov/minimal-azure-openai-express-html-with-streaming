@@ -42,7 +42,8 @@
               <option value="text-embedding-ada-002">text-embedding-ada-002</option>
               <option value="deepseek-chat">deepseek-chat (deepseek-v3)</option>
               <option value="deepseek-reasoner">deepseek-reasoner (deepseek-r1)</option>
-              <!--option value="gpt-4o-realtime-preview">gpt-4o-realtime-preview</option-->
+              <option value="gpt-4o-mini-realtime-preview">gpt-4o-mini-realtime-preview</option>
+              <option value="gpt-4o-realtime-preview">gpt-4o-realtime-preview</option>
               </select>
           </div>
         </div>
@@ -52,7 +53,7 @@
         <button id="btnAbort" class="invisible" title="Stop"></button>
       </div>
     </div>
-    <script src="browser-page.js" defer></script>
+    <script type="module" src="components/browser-page.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.0/dist/katex.min.css">
     <link rel="stylesheet" href="https://unpkg.com/@wcj/markdown-to-html/dist/marked.css">
     <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.11.1/styles/default.min.css"/>
@@ -62,5 +63,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/javascript.min.js" defer></script>
     <script src="marked-custom.js" defer></script>
     <script src="audioStreamingManager.js" defer></script>
+    <script src="browser-realtime-webrtc.js" defer></script>
   </body>
 </html>

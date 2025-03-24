@@ -13,8 +13,8 @@
   let abortController = new AbortController();
   let audioStreamingManager = null;
 
-  const thinkingHeader = `<span class="gradient-text">Thinking...</span>`;
-  
+  const thinkingHeader = await fetch("/api/progresstext").then(r => r.text()).catch(() => "Thinking...");
+
   // Last scroll position for the root element
   let lastScrollTop = 0;
   // If the user scrolled up, the auto-scrolldown should be disabled. 
@@ -100,6 +100,7 @@
     document.querySelectorAll(".text button").forEach(btn => btn.removeAttribute("disabled"));
     btnAbort.classList.add("invisible");
     if(audioStreamingManager?.isProcessing) audioStreamingManager.stopPlayback();
+    if(isRealtimeModel(model) && typeof stopRealtimeSession === "function") stopRealtimeSession();
   };
 
   const handleNextPrompt = (type) => { // type = "text", type = "code"
@@ -159,6 +160,7 @@
   
   const isAudioModel = (model) => /audio/i.test(model);
   const isEmbeddingModel = (model) => /embedding/i.test(model);
+  const isRealtimeModel = (model) => /realtime/i.test(model);
   const handleErrorOutput = (trailingHtml) => {
     if(root.innerHTML.includes(thinkingHeader)) {
       root.innerHTML = root.innerHTML.replace(thinkingHeader, trailingHtml);
@@ -205,15 +207,37 @@
       endpointUri = `${window.location.origin}/api/${endpoint}/chat`;
     }
     const userContent = content ? content : setDefaultContent();
-    const messages = [
-      ...chatHistory,
-      {
-        role: "user",
-        content: userContent,
-      },
-    ];
-  
+    const messages = [...chatHistory, { role: "user", content: userContent }];
+
+    const getFormattedChatHistory = () => {
+      const chatHistoryOutput = [];
+      for (const chatEntry of chatHistory) {
+        chatHistoryOutput.push(
+          getFormattedOutput(chatEntry.content, chatEntry.role !== "user")
+        );
+      }
+      return chatHistoryOutput.join("\n");
+    };
+
     try {
+      if(isRealtimeModel(model)) {
+        const updateRealtimeRootInnerHtml = (formattedChatHistory, formattedUserRequest, rawOutput) => {
+          const formattedAiOutput = getFormattedOutput(rawOutput.join(""), true);
+          root.innerHTML = `${formattedChatHistory}\n${formattedUserRequest}\n${formattedAiOutput}`;
+          scrollDown();
+        };
+        startRealtimeSession({
+          model,
+          prompt: userContent,
+          chatHistory,
+          thinkingHeader,
+          getFormattedChatHistory,
+          getFormattedOutput,
+          updateRealtimeRootInnerHtml
+        });
+        return;
+      }
+  
       let res;
       if(isEmbedding) {
         let dimensions = null;
@@ -251,14 +275,7 @@
       let formattedAiOutput = "";
       let done = false;
 
-      const chatHistoryOutput = [];
-      for (const chatEntry of chatHistory) {
-        chatHistoryOutput.push(
-          getFormattedOutput(chatEntry.content, chatEntry.role !== "user")
-        );
-      }
-      const formattedChatHistory = chatHistoryOutput.join("\n");
-
+      const formattedChatHistory = getFormattedChatHistory();
       const formattedUserRequest = getFormattedOutput(userContent, false);
       const updateRootInnerHtml = () => {
         if(isEmbedding) {
@@ -315,9 +332,7 @@
                 thinkingHeaderRemoved = true;
               }
             });
-            // Bug fix: history duplicates after the second output
-            // chatHistory.push(...messages)
-            chatHistory.push(messages[messages.length - 1]);
+            chatHistory.push({ role: "user", content: userContent });
             if(isEmbedding) {
               chatHistory.push({
                 role: "assistant",
@@ -353,15 +368,15 @@
     }
   }
 
-  function getFormattedOutput(rawOutput, isAi) {
+  function getFormattedOutput(rawOutputString, isAi) {
     const formatted = isAi
       ? `<div class="response">
           <div class="icon-container">${openAiIcon}</div>
-          <div>${marked.marked(rawOutput)}</div>
+          <div>${marked.marked(rawOutputString)}</div>
         </div>`
       : `<div class="request">
           <div></div>
-          <div class="user-content">${marked.marked(rawOutput)}</div>
+          <div class="user-content">${marked.marked(rawOutputString)}</div>
         </div>`;
     return formatted;
   }
