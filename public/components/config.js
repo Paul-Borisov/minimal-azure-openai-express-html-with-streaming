@@ -11,6 +11,9 @@ export const targetEndpoints = {
 
 export const modelsThatSupportResponses = [
   "computer-use-preview",
+  "gpt-4.1",
+  "gpt-4.1-mini",
+  //"gpt-4.1-nano", // Commented out to speed up the output
   "gpt-4.5-preview",
   "gpt-4o",
   //"gpt-4o-mini",
