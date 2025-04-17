@@ -1,8 +1,10 @@
 export const targetEndpoints = {
   //"4o": "azureopenai",
-  //"o1": "openai",
+  //"4.1": "azureopenai",
+  //"o1": "azureopenai",
   //"o1-mini": "azureopenai",
   //"o3-mini": "azureopenai",
+  //"o4-mini": "azureopenai",
   //"embedding": "azureopenai",
   //"gpt-4o-audio-preview": "azureopenai",
   deepseek: "deepseek",
@@ -21,5 +23,6 @@ export const modelsThatSupportResponses = [
   //"gpt-3.5-turbo",
   //"o1",
   "o1-pro",
-  //"o3-mini"
+  //"o3-mini",
+  "o4-mini"
 ];
