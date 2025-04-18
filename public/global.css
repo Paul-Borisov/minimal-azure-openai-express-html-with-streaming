@@ -97,7 +97,7 @@ p, hr {
 
 .box {
   text-align: justify;
-  height: 85dvh;
+  /* height: 85dvh; */
   overflow-y: auto;
   padding: 5px;
   white-space: pre-wrap;
@@ -216,14 +216,14 @@ select {
   }
 }
 
-@media (max-height: 400px) {
+/* @media (max-height: 400px) {
   .box {
     height: 60dvh;
   }
   .content {
     height: 80dvh;
   }
-}
+} */
 
 .text {
   margin-top: 15px;
