@@ -4,3 +4,4 @@
 .env
 deploy*
 local/
+*not-in-use*
