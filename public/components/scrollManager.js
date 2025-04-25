@@ -21,5 +21,6 @@ export function resetScroll() {
 export function scrollDown(root) {
   if (!freezeAutoScroll) {
     root.scrollTo({ top: root.scrollHeight });
+    lastScrollTop = root.scrollTop;
   }
 }

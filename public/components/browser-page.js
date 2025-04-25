@@ -40,6 +40,10 @@ function isEmbeddingModel(model) {
   return /embedding/i.test(model);
 }
 
+function isImageModel(model) {
+  return /image/i.test(model);
+}
+
 function isRealtimeModel(model) {
   return /realtime/i.test(model);
 }
@@ -56,6 +60,7 @@ initEventHandlers({
     audioStreamingManager,
     isAudioModel,
     isEmbeddingModel,
+    isImageModel,
     isRealtimeModel,
     handleStop,
     handleErrorOutput,
@@ -64,6 +69,7 @@ initEventHandlers({
   }),
   handleStart,
   handleStop,
+  isImageModel,
   chatHistory,
   modelRef
 });

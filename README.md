@@ -9,7 +9,8 @@ The server can be started quickly in VSCode and in the local docker container. I
 This server supports:
 
 - Key and keyless Entra ID authentication for Azure OpenAI.
-- The use of streaming outputs in OpenAI and Azure OpenAI, cancelling the streaming request with the **Stop** button.
+- Image generation using **gpt-image-1** and realtime audio chat with **gpt-4o-realtime-preview**.
+- Streaming outputs in OpenAI and Azure OpenAI, cancelling the streaming request with the **Stop** button.
 - Options to formatting AI outputs for code blocks and markdown content.
 - Working with chat history context. Samples for code generations and text prompts.
 - Error handling and fallback logic to plain request handling when the streaming option is not supported by the selected language model.
@@ -21,6 +22,15 @@ Technical stack:
 - highlight.js, marked.js
 
 ### Updates and bug fixes:
+
+**April 25, 2025, v1.1.1**
+- Revised the logic, split to separate smaller js-files.
+- Added models **gpt-image-1**, **o4-mini**, **gpt-4.1**, **gpt-4.1-mini**, **gpt-4.1-nano**, **chatgpt-4o-latest**
+  - **gpt-image-1** generates images and add them to the same chat.
+- Added support for **gpt-4o-realtime-preview**, webRTC version for the regular OpenAI.
+- Fixed auto-scrolling, which did not work correctly after the first prompt.
+- Changed thinkingHeader to be loaded from the server-side api.
+![Image generation with gpt-image-1](docs/images/6_image-generation-with-gpt-image-1.png "Image generation with gpt-image-1")
 
 **March 22, 2025, v1.1.0**
 - Revised the logic
@@ -158,6 +168,11 @@ You can add the desired models to the file public/index.html.
 
 ```html
 <select class="model">
+  <option value="gpt-image-1">gpt-image-1</option>
+  <option value="o4-mini">o4-mini</option>
+  <option value="gpt-4.1">gpt-4.1</option>
+  <option value="gpt-4.1-mini">gpt-4.1-mini</option>
+  <option value="gpt-4.1-nano" selected="true">gpt-4.1-nano</option>
   <option value="o1-pro">o1-pro (warning: the most expensive model)</option>
   <option value="computer-use-preview">computer-use-preview</option>
   <option value="gpt-4o-mini-search-preview">gpt-4o-mini-search-preview</option>
@@ -166,8 +181,9 @@ You can add the desired models to the file public/index.html.
   <option value="gpt-4o-audio-preview">gpt-4o-audio-preview (warning: loud voice out)</option>
   <option value="gpt-4o-mini-audio-preview">gpt-4o-mini-audio-preview (warning: loud voice out)</option>
   <option value="gpt-4o">gpt-4o</option>
-  <option value="gpt-4o-mini" selected="true">gpt-4o-mini</option>
+  <option value="gpt-4o-mini">gpt-4o-mini</option>
   <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+  <option value="chatgpt-4o-latest">chatgpt-4o-latest</option>
   <option value="o3-mini">o3-mini (tier 3+ required)</option>
   <option value="o1-mini">o1-mini</option>
   <option value="o1">o1</option>
@@ -178,7 +194,9 @@ You can add the desired models to the file public/index.html.
   <option value="text-embedding-ada-002">text-embedding-ada-002</option>
   <option value="deepseek-chat">deepseek-chat (deepseek-v3)</option>
   <option value="deepseek-reasoner">deepseek-reasoner (deepseek-r1)</option>
-  </select>
+  <option value="gpt-4o-mini-realtime-preview">gpt-4o-mini-realtime-preview</option>
+  <option value="gpt-4o-realtime-preview">gpt-4o-realtime-preview</option>
+</select>
 ```
 
 You can also change target endpoint routings - to azureopenai or openai - at the header of public/browser-page.js (public/browser-console.js for the console client).
@@ -190,9 +208,11 @@ You can reconfigure specific models to be handled by Azure OpenAI and/or the reg
 ```javascript
 const targetEndpoints = {
   //"4o": "azureopenai",
-  //"o1": "openai",
+  //"4.1": "azureopenai",
+  //"o1": "azureopenai",
   //"o1-mini": "azureopenai",
   //"o3-mini": "azureopenai",
+  //"o4-mini": "azureopenai",
   //"embedding": "azureopenai",
   //"gpt-4o-audio-preview": "azureopenai",
   "deepseek": "deepseek",
@@ -204,16 +224,20 @@ By default, text models use the classic API endpoint /v1/chat/completions
 You can configure specific models to use the newer /v1/responses. Add them into the array of **modelsThatSupportResponses**
 
 ```javascript
-const modelsThatSupportResponses = [ // As of March 22, 2025
-  "computer-use-preview", // computer-use-preview only supported responses APi; it did not support chat API
-  "gpt-4.5-preview",      // supports both, responses and chat API
-  "gpt-4o",               // supports both, responses and chat API
-  //"gpt-4o-mini",        // supports both, responses and chat API
-  //"gpt-4-32k-0314",     // supports both, responses and chat API
-  //"gpt-3.5-turbo",      // supports both, responses and chat API
-  //"o1",                 // o1 was working much slower on responses API
-  "o1-pro",               // o1-pro only supported responses APi; it did not support chat API
-  //"o3-mini",            // o3-mini was working much slower; o1-mini and o1-preview did not support responses API
+const modelsThatSupportResponses = [ // As of April 25, 2025
+  "computer-use-preview",
+  "gpt-4.1",
+  "gpt-4.1-mini",
+  //"gpt-4.1-nano", // Commented out to speed up the output
+  "gpt-4.5-preview",
+  "gpt-4o",
+  //"gpt-4o-mini",
+  //"gpt-4-32k-0314",
+  //"gpt-3.5-turbo",
+  //"o1",
+  "o1-pro",
+  //"o3-mini",
+  "o4-mini"
 ];
 ```
 

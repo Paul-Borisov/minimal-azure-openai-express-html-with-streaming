@@ -1,5 +1,5 @@
-import { targetEndpoints, modelsThatSupportResponses } from "./config.js";
-import { formatEmbeddings, getFormattedOutput } from "./ui.js";
+import { optionalImageParameters, modelsThatSupportResponses, targetEndpoints } from "./config.js";
+import { formatDataImageSource, formatEmbeddings, getFormattedDataImage, getFormattedOutput } from "./ui.js";
 import { resetScroll, scrollDown } from "./scrollManager.js";
 import { setDefaultContent } from "./samples.js";
 
@@ -14,6 +14,7 @@ export async function processRequest(params) {
     audioStreamingManager,
     isAudioModel,
     isEmbeddingModel,
+    isImageModel,
     isRealtimeModel,
     handleStop,
     handleErrorOutput,
@@ -52,8 +53,11 @@ export async function processRequest(params) {
 
   let endpointUri;
   const isEmbedding = isEmbeddingModel(model);
+  const isImage = isImageModel(model);
   if (isEmbedding) {
     endpointUri = `${window.location.origin}/api/${endpoint}/embeddings`;
+  } else if (isImage) {
+    endpointUri = `${window.location.origin}/api/${endpoint}/images`;
   } else if (modelSupportsResponses) {
     endpointUri = `${window.location.origin}/api/${endpoint}/responses`;
   } else {
@@ -104,6 +108,13 @@ export async function processRequest(params) {
         body: JSON.stringify({ input: userContent, model, dimensions }),
         signal: abortController.signal,
       });
+    } else if (isImage) {
+      res = await fetch(endpointUri, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ model, prompt: userContent, ...optionalImageParameters }),
+        signal: abortController.signal,
+      });
     } else {
       res = await fetch(endpointUri, {
         method: "POST",
@@ -127,9 +138,30 @@ export async function processRequest(params) {
     let done = false;
 
     const updateRootInnerHtml = () => {
+      const outputContent = rawOutput.join("");
+      if (isImage) {
+        if (done) {
+          const imgTag = getFormattedDataImage(
+            formatDataImageSource(outputContent, optionalImageParameters.output_format)
+          );
+          root.innerHTML = `${formattedChatHistory}\n${formattedUserRequest}\n${imgTag}`;
+          setTimeout(() => scrollDown(root), 1000);
+        } else {
+          if (outputContent.includes(thinkingHeader)) {
+            formattedAiOutput = getFormattedOutput(outputContent, true, openAiIcon);
+            root.innerHTML = `${formattedChatHistory}\n${formattedUserRequest}\n${formattedAiOutput}`;
+            scrollDown(root);
+          } else {
+            // Ignore this intermediate output for the partial base64 image content
+          }
+        }
+        return
+      }
+      
       formattedAiOutput = isEmbedding
-        ? getFormattedOutput(formatEmbeddings(rawOutput.join("")), true, openAiIcon)
-        : getFormattedOutput(rawOutput.join(""), true, openAiIcon);
+      ? getFormattedOutput(formatEmbeddings(outputContent), true, openAiIcon)
+      : getFormattedOutput(outputContent, true, openAiIcon);
+      
       root.innerHTML = `${formattedChatHistory}\n${formattedUserRequest}\n${formattedAiOutput}`;
       scrollDown(root);
     };
@@ -169,11 +201,17 @@ export async function processRequest(params) {
             }
           });
           chatHistory.push({ role: "user", content: userContent });
+          let aiContent
+          if (isEmbedding) {
+            auContent = formatEmbeddings(rawOutput.join(""));
+          } else if (isImage) {
+            aiContent = formatDataImageSource(rawOutput.join(""), optionalImageParameters.output_format);
+          } else {
+            aiContent = rawOutput.join("");
+          }
           chatHistory.push({
             role: "assistant",
-            content: isEmbedding
-              ? formatEmbeddings(rawOutput.join(""))
-              : rawOutput.join("")
+            content: aiContent
           });
           updateRootInnerHtml();
           break;

@@ -1,6 +1,17 @@
 export const thinkingHeader = await fetch("/api/progresstext").then(r => r.text()).catch(() => "Thinking...");
 
+const dataImageSourcePrefix = "data:image/";
+
+export function getFormattedDataImage(src) {
+  const img = document.createElement("img");
+  img.src = src;
+  img.className = "image-full";
+  return img.outerHTML;
+}
+
 export function getFormattedOutput(rawOutput, isAi, openAiIcon) {
+  if (rawOutput?.startsWith(dataImageSourcePrefix)) return getFormattedDataImage(rawOutput);
+  
   return isAi
     ? `<div class="response">
          <div class="icon-container">${openAiIcon}</div>
@@ -10,6 +21,10 @@ export function getFormattedOutput(rawOutput, isAi, openAiIcon) {
          <div></div>
          <div class="user-content">${marked.marked(rawOutput)}</div>
        </div>`;
+}
+
+export function formatDataImageSource(src, mimeType) {
+  return `${dataImageSourcePrefix}${mimeType};base64,${src}`;
 }
 
 export function formatEmbeddings(embeddings) {

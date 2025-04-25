@@ -12,12 +12,13 @@
 * 3. Comment out the line AZURE_OPENAI_API_KEY=... in .env
 * 4. Start the server using the command node server-entraid.js. The keyless auth should work.
 */
-const express = require("express");
 const cors = require("cors");
-const { OpenAI } = require("openai");
+const express = require("express");
 const { generateCompletionsStream } = require("./openai/completions");
-const { generateResponsesStream } = require("./openai/responses");
 const { generateEmbedding } = require("./openai/embeddings");
+const { generateImage } = require("./openai/images");
+const { generateResponsesStream } = require("./openai/responses");
+const { OpenAI } = require("openai");
 const path = require("path");
 const os = require("os");
 require("dotenv").config();
@@ -38,7 +39,8 @@ const deepSeek = deepSeekApiKey
   : undefined;
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: '100mb' }));
+app.use(express.urlencoded({ limit: '100mb', extended: true }));
 app.use(cors());
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -56,11 +58,14 @@ app.get("/api/progresstext", (_, res) => {
 app.post("/api/openai/chat", async (req, res) =>
   await generateCompletionsStream(req, res, openai, systemInstructions, streaming)
 );
-app.post("/api/openai/responses", async (req, res) =>
-  await generateResponsesStream(req, res, openai, systemInstructions, streaming)
-);
 app.post("/api/openai/embeddings", async (req, res) =>
   await generateEmbedding(req, res, openai)
+);
+app.post("/api/openai/images", async (req, res) =>
+  await generateImage(req, res, openai)
+);
+app.post("/api/openai/responses", async (req, res) =>
+  await generateResponsesStream(req, res, openai, systemInstructions, streaming)
 );
 app.get("/api/openai/session", async (req, res) => {
   const model = req.model || "gpt-4o-mini-realtime-preview-2024-12-17";

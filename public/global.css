@@ -136,6 +136,10 @@ select {
   font-weight: 600;
 }
 
+.image-full {
+  width: -webkit-fill-available;
+}
+
 @media (max-width: 1024px) {
   .box,
   .text {

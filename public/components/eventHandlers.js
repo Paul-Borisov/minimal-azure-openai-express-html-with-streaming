@@ -4,7 +4,14 @@ import { setInitialText, handleNextPrompt } from "./samples.js";
 export let abortController = new AbortController();
 
 export function initEventHandlers(deps) {
-  const { processRequest, handleStart, handleStop, chatHistory, modelRef } = deps;
+  const { 
+    processRequest,
+    handleStart,
+    handleStop,
+    isImageModel,
+    chatHistory,
+    modelRef
+  } = deps;
   
   btnSend.addEventListener("click", () => {
     handleStart();
@@ -39,6 +46,9 @@ export function initEventHandlers(deps) {
 
   selectedModel.addEventListener("change", () => {
     modelRef.value = selectedModel.selectedOptions[0].value;
+    if (isImageModel(modelRef.value)) {
+      handleNextPrompt("image", txtPrompt);
+    }
   });
 
   txtPrompt.addEventListener("keydown", (event) => {

@@ -26,3 +26,21 @@ export const modelsThatSupportResponses = [
   //"o3-mini",
   "o4-mini"
 ];
+
+// https://platform.openai.com/docs/guides/image-generation?image-generation-model=gpt-image-1
+export const optionalImageParameters = {
+  // transparent, opaque
+  background: "transparent",
+  // auto (default), low (less restrictive filtering)
+  moderation: "low",
+  // 1 - 10
+  n: 1,
+  // 0 - 100 (for webp and jpeg only)
+  output_compression: 50,
+  // png, jpeg, webp
+  output_format: "webp",
+  // Available sizes: 1024x1024 (square), 1536x1024 (portrait), 1024x1536 (landscape), auto (default)
+  size: "1024x1024",
+  // low, medium, high, auto (default)
+  quality: "high"
+};
