@@ -37,10 +37,10 @@ export const optionalImageParameters = {
   n: 1,
   // 0 - 100 (for webp and jpeg only)
   output_compression: 50,
-  // png, jpeg, webp
+  // png, jpeg, webp. dall-e-2 and dall-e-3 only support png.
   output_format: "webp",
   // Available sizes: 1024x1024 (square), 1536x1024 (portrait), 1024x1536 (landscape), auto (default)
   size: "1024x1024",
-  // low, medium, high, auto (default)
+  // low, medium, high, auto (default). dall-e-3 only supports "hd" and "standard" (high => hd is chosen automatically in images.js)
   quality: "high"
 };

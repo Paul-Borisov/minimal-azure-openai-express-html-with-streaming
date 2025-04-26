@@ -136,26 +136,37 @@ export async function processRequest(params) {
     let rawOutput = [];
     let formattedAiOutput = "";
     let done = false;
+    let isError = false;
 
     const updateRootInnerHtml = () => {
       const outputContent = rawOutput.join("");
+      const formatImageOutput = () => {
+        const imgTag = getFormattedDataImage(
+          formatDataImageSource(outputContent, model.includes("dall-e") ? "png" : optionalImageParameters.output_format)
+        );
+        root.innerHTML = `${formattedChatHistory}\n${formattedUserRequest}\n${imgTag}`;
+        setTimeout(() => scrollDown(root), 1000);
+      };
+      const formatTextOutput = () => {
+        formattedAiOutput = getFormattedOutput(outputContent, true, openAiIcon);
+        root.innerHTML = `${formattedChatHistory}\n${formattedUserRequest}\n${formattedAiOutput}`;
+        scrollDown(root);
+      };
       if (isImage) {
         if (done) {
-          const imgTag = getFormattedDataImage(
-            formatDataImageSource(outputContent, optionalImageParameters.output_format)
-          );
-          root.innerHTML = `${formattedChatHistory}\n${formattedUserRequest}\n${imgTag}`;
-          setTimeout(() => scrollDown(root), 1000);
+          if (isError) {
+            formatTextOutput();
+          } else {
+            formatImageOutput();
+          }
         } else {
           if (outputContent.includes(thinkingHeader)) {
-            formattedAiOutput = getFormattedOutput(outputContent, true, openAiIcon);
-            root.innerHTML = `${formattedChatHistory}\n${formattedUserRequest}\n${formattedAiOutput}`;
-            scrollDown(root);
+            formatTextOutput();
           } else {
             // Ignore this intermediate output for the partial base64 image content
           }
         }
-        return
+        return;
       }
       
       formattedAiOutput = isEmbedding
@@ -194,6 +205,7 @@ export async function processRequest(params) {
         }
         if (msg === "[DONE]") {
           done = true;
+          isError = false;
           if (!params.audioStreamingManager?.isProcessing) handleStop();
           rawOutput.forEach((entry, index) => {
             if (entry.includes(thinkingHeader)) {
@@ -217,6 +229,7 @@ export async function processRequest(params) {
           break;
         } else if (msg === "[ERROR]") {
           done = true;
+          isError = true;
           handleStop();
         }
         rawOutput.push(msg);

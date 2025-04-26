@@ -41,7 +41,7 @@ function isEmbeddingModel(model) {
 }
 
 function isImageModel(model) {
-  return /image/i.test(model);
+  return /image|dall-e/i.test(model);
 }
 
 function isRealtimeModel(model) {

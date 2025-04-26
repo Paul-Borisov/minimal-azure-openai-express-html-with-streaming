@@ -47,7 +47,7 @@ export function initEventHandlers(deps) {
   selectedModel.addEventListener("change", () => {
     modelRef.value = selectedModel.selectedOptions[0].value;
     if (isImageModel(modelRef.value)) {
-      handleNextPrompt("image", txtPrompt);
+      handleNextPrompt(modelRef.value !== "dall-e-2" ? "image" : "image_dalle_2", txtPrompt);
     }
   });
 

@@ -9,6 +9,7 @@ export const samples = [
   { text: "There are 3 killers in a room. A regular person enters the room and kills one of the killers. How many killers are in the room?" },
   { text: "Generate CSV-table for all weeks of 2025. Columns: WeekNumber, StartDate;, EndDate. Use semicolon as column delimiter and ISO-date format. Start day is Monday. End day is Friday. Wrap into ```" },
   { image: "Elon Mask in the clothing of Finnish flag colors in the role of a textcrunch service salesman"},
+  { image_dalle_2: "Natural landscape with mountains and ocean"},
   { default: "Generate test response of 100 characters" }
 ];
 
