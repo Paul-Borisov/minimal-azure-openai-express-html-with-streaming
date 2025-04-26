@@ -23,11 +23,12 @@ Technical stack:
 
 ### Updates and bug fixes:
 
-**April 25, 2025, v1.1.1**
+**April 25 - 26, 2025, v1.1.1**
 - Revised the logic, split to separate smaller js-files.
 - Added models **gpt-image-1**, **o4-mini**, **gpt-4.1**, **gpt-4.1-mini**, **gpt-4.1-nano**, **chatgpt-4o-latest**
   - **gpt-image-1** generates images and add them to the same chat.
 - Added support for **gpt-4o-realtime-preview**, webRTC version for the regular OpenAI.
+- Added support for **dall-e-3** and **dall-e-2** to make comparisons with new gpt-image-1.
 - Fixed auto-scrolling, which did not work correctly after the first prompt.
 - Changed thinkingHeader to be loaded from the server-side api.
 ![Image generation with gpt-image-1](docs/images/6_image-generation-with-gpt-image-1.png "Image generation with gpt-image-1")
