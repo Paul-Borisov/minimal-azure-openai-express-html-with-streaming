@@ -23,7 +23,7 @@ Technical stack:
 
 ### Updates and bug fixes:
 
-**April 25 - 26, 2025, v1.1.1**
+**April 26, 2025, v1.1.1**
 - Revised the logic, split to separate smaller js-files.
 - Added models **gpt-image-1**, **o4-mini**, **gpt-4.1**, **gpt-4.1-mini**, **gpt-4.1-nano**, **chatgpt-4o-latest**
   - **gpt-image-1** generates images and add them to the same chat.
