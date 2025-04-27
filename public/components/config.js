@@ -7,6 +7,7 @@ export const targetEndpoints = {
   //"o4-mini": "azureopenai",
   //"embedding": "azureopenai",
   //"gpt-4o-audio-preview": "azureopenai",
+  //"dall-e": "azureopenai",
   deepseek: "deepseek",
   default: "openai"
 };
@@ -41,6 +42,8 @@ export const optionalImageParameters = {
   output_format: "webp",
   // Available sizes: 1024x1024 (square), 1536x1024 (portrait), 1024x1536 (landscape), auto (default)
   size: "1024x1024",
+  // vivid, natural for dall-e-3 (not in used by gpt-image-1)
+  style: "natural",
   // low, medium, high, auto (default). dall-e-3 only supports "hd" and "standard" (high => hd is chosen automatically in images.js)
   quality: "high"
 };

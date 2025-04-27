@@ -58,15 +58,19 @@ app.get("/api/progresstext", (_, res) => {
 app.post("/api/openai/chat", async (req, res) =>
   await generateCompletionsStream(req, res, openai, systemInstructions, streaming)
 );
+
 app.post("/api/openai/embeddings", async (req, res) =>
   await generateEmbedding(req, res, openai)
 );
+
 app.post("/api/openai/images", async (req, res) =>
   await generateImage(req, res, openai)
 );
+
 app.post("/api/openai/responses", async (req, res) =>
   await generateResponsesStream(req, res, openai, systemInstructions, streaming)
 );
+
 app.get("/api/openai/session", async (req, res) => {
   const model = req.model || "gpt-4o-mini-realtime-preview-2024-12-17";
   const r = await fetch("https://api.openai.com/v1/realtime/sessions", {
@@ -108,6 +112,11 @@ if( isAzureOpenAiSupported ) {
   app.post("/api/azureopenai/embeddings", async (req, res) => {
     const azOpenai = createAzureOpenAI(req);
     await generateEmbedding(req, res, azOpenai);
+  });
+
+  app.post("/api/azureopenai/images", async (req, res) => {
+    const azOpenai = createAzureOpenAI(req);    
+    await generateImage(req, res, azOpenai)
   });
 }
 

@@ -42,6 +42,7 @@ async function generateImage(
         + ". I NEED to test how the tool works with extremely simple prompts. DO NOT add any detail, just use it AS-IS",
       response_format: "b64_json",
       size: req.body.size || "1024x1024",
+      style: req.body.style || "natural",
       quality: req.body.quality === "high" ? "hd" : "standard"
     };
   } else if(model.includes("dall-e-2")) {

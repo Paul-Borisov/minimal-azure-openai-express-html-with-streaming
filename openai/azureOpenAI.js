@@ -2,6 +2,7 @@
 const endpoint = process.env["AZURE_OPENAI_ENDPOINT"];
 const apiVersion = process.env["AZURE_OPENAI_API_VERSION"];
 const defaultDeployment = process.env["AZURE_OPENAI_API_DEPLOYMENT"];
+const { modelDeploymentMap } = require("./azureOpenAIDeploymentMap");
 
 // Determine authentication mode for Azure OpenAI:
 // - Use AZURE_AUTH_MODE env variable if provided.
@@ -21,13 +22,14 @@ const createAzureOpenAI = (req) => {
   if(!isAzureOpenAiSupported) {
     throw new Error("Azure OpenAI is not supported. AZURE_OPENAI_ENDPOINT is missing")
   }
-  const { AzureOpenAI } = require("openai");  
+  const { AzureOpenAI } = require("openai");
+  const deployment = modelDeploymentMap[req.body.model] ?? req.body.model ?? defaultDeployment;
   if (azureAuthMode === "key") {
     return new AzureOpenAI({
       endpoint,
       azureApiKey: process.env["AZURE_OPENAI_API_KEY"],
       apiVersion,
-      deployment: req.body.model ?? defaultDeployment,
+      deployment,
     });
   } else {
     // Keyless authentication using Entra ID.
@@ -52,7 +54,7 @@ const createAzureOpenAI = (req) => {
     return new AzureOpenAI({
       apiVersion,
       endpoint,
-      deployment: req.body.model ?? defaultDeployment,
+      deployment,
       azureADTokenProvider,
     });
   }
