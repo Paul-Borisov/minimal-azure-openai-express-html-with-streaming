@@ -40,7 +40,7 @@ Technical stack:
   - These two models could only use /v1/responses. They did not support classic /v1/chat/completions
   - o1-pro worked slow, and it's the most expensive if compared with other models.
 - Changed handling for the models gpt-4.5-preview and gpt-4o (full) to use the new API of /v1/responses
-  - /v1/responses can be enabled for other models by adding them to the array public/browser-page.js > modelsThatSupportResponses
+  - /v1/responses can be enabled for other models by adding them to the array public/components/browser-page.js > modelsThatSupportResponses
   - Other models that supported /v1/responses: 
     - gpt-4o-mini
     - gpt-4-32k-0314
@@ -202,7 +202,7 @@ You can add the desired models to the file public/index.html.
 </select>
 ```
 
-You can also change target endpoint routings - to azureopenai or openai - at the header of public/browser-page.js (public/browser-console.js for the console client).
+You can also change target endpoint routings - to azureopenai or openai - at the header of public/components/browser-page.js (public/browser-console.js for the console client).
 
 By default, requests to language model endpoints are handled by the regular OpenAI.
 You can reconfigure specific models to be handled by Azure OpenAI and/or the regular OpenAI.
@@ -218,6 +218,7 @@ const targetEndpoints = {
   //"o4-mini": "azureopenai",
   //"embedding": "azureopenai",
   //"gpt-4o-audio-preview": "azureopenai",
+  //"dall-e": "azureopenai",
   "deepseek": "deepseek",
   "default": "openai",
 };
