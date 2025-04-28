@@ -215,7 +215,7 @@ export async function processRequest(params) {
           chatHistory.push({ role: "user", content: userContent });
           let aiContent
           if (isEmbedding) {
-            auContent = formatEmbeddings(rawOutput.join(""));
+            aiContent = formatEmbeddings(rawOutput.join(""));
           } else if (isImage) {
             aiContent = formatDataImageSource(rawOutput.join(""), optionalImageParameters.output_format);
           } else {
