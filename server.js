@@ -23,7 +23,7 @@ const path = require("path");
 const os = require("os");
 require("dotenv").config();
 const {isAzureOpenAiSupported, createAzureOpenAI} = require("./openai/azureOpenAI");
-const { thinkingHeader } = require("./openai/shared");
+const { thinkingHeader, validateSupportedAssets } = require("./openai/shared");
 
 const systemInstructions = process.env["SYSTEM_INSTRUCTIONS"];
 const streaming = !/true|1|yes/i.test(process.env["NO_STREAMING"]);
@@ -55,76 +55,112 @@ app.get("/api/progresstext", (_, res) => {
 });
 
 // Endpoints for regular OpenAI
-app.post("/api/openai/chat", async (req, res) =>
-  await generateCompletionsStream(req, res, openai, systemInstructions, streaming)
+const openaiHandler = (generator, ...args) => {
+  return async (req, res) => {
+    try {
+      await validateSupportedAssets(req.body.model, "openai");
+      await generator(req, res, openai, ...args);
+    } catch (e) {
+      res.status(500).send({ message: e.message });
+    }
+  };
+}
+
+app.post(
+  "/api/openai/chat",
+  openaiHandler(generateCompletionsStream, systemInstructions, streaming)
 );
 
-app.post("/api/openai/embeddings", async (req, res) =>
-  await generateEmbedding(req, res, openai)
+app.post(
+  "/api/openai/responses",
+  openaiHandler(generateResponsesStream, systemInstructions, streaming)
 );
 
-app.post("/api/openai/images", async (req, res) =>
-  await generateImage(req, res, openai)
+app.post(
+  "/api/openai/embeddings",
+  openaiHandler(generateEmbedding)
 );
 
-app.post("/api/openai/responses", async (req, res) =>
-  await generateResponsesStream(req, res, openai, systemInstructions, streaming)
+app.post(
+  "/api/openai/images",
+  openaiHandler(generateImage)
 );
 
 app.get("/api/openai/session", async (req, res) => {
   const model = req.model || "gpt-4o-mini-realtime-preview-2024-12-17";
-  const r = await fetch("https://api.openai.com/v1/realtime/sessions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model,
-      modalities: ["audio", "text"],
-      voice: "verse",
-      input_audio_transcription: {
-        model: "whisper-1",
+  try {
+    await validateSupportedAssets(model, "openai");
+    const r = await fetch("https://api.openai.com/v1/realtime/sessions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
       },
-      // input_audio_noise_reduction: null // default, noise reduction disabled; this mode is the most sensitive to any sound input
-      input_audio_noise_reduction: {
-        //type: "near_field" // near_field is for close-talking microphones such as headphones
-        type: "far_field"    // far_field is for far-field microphones such as laptop or conference room microphones
-      }  
-    }),
-  });
-  const data = await r.json();
-  res.send(data);
+      body: JSON.stringify({
+        model,
+        modalities: ["audio", "text"],
+        voice: "verse",
+        input_audio_transcription: {
+          model: "whisper-1",
+        },
+        // input_audio_noise_reduction: null // default, noise reduction disabled; this mode is the most sensitive to any sound input
+        input_audio_noise_reduction: {
+          //type: "near_field" // near_field is for close-talking microphones such as headphones
+          type: "far_field"    // far_field is for far-field microphones such as laptop or conference room microphones
+        }  
+      }),
+    });
+    const data = await r.json();
+    res.send(data);
+  } catch (e) {
+    res.status(500).send({ message: e.message });
+  }
 });
 
 // Endpoints for Azure OpenAI
 if( isAzureOpenAiSupported ) {
-  app.post("/api/azureopenai/chat", async (req, res) => {
-    const azOpenai = createAzureOpenAI(req);
-    await generateCompletionsStream(req, res, azOpenai, systemInstructions, streaming);
-  });
+  const azureOpenAihandler = (generator, ...args) => {
+    return async (req, res) => {
+      try {
+        const azOpenai = await createAzureOpenAI(req);
+        await generator(req, res, azOpenai, ...args);
+      } catch (e) {
+        res.status(500).send({ message: e.message });
+      }
+    };
+  };
 
-  app.post("/api/azureopenai/responses", async (req, res) => {
-    const azOpenai = createAzureOpenAI(req);
-    await generateResponsesStream(req, res, azOpenai, systemInstructions, streaming);
-  });
+  app.post(
+    "/api/azureopenai/chat",
+    azureOpenAihandler(generateCompletionsStream, systemInstructions, streaming)
+  );
+  
+  app.post(
+    "/api/azureopenai/responses",
+    azureOpenAihandler(generateResponsesStream, systemInstructions, streaming)
+  );
+  
+  app.post(
+    "/api/azureopenai/embeddings",
+    azureOpenAihandler(generateEmbedding)
+  );
 
-  app.post("/api/azureopenai/embeddings", async (req, res) => {
-    const azOpenai = createAzureOpenAI(req);
-    await generateEmbedding(req, res, azOpenai);
-  });
-
-  app.post("/api/azureopenai/images", async (req, res) => {
-    const azOpenai = createAzureOpenAI(req);    
-    await generateImage(req, res, azOpenai)
-  });
+  app.post(
+    "/api/azureopenai/images",
+    azureOpenAihandler(generateImage)
+  );  
 }
 
 // Endpoint for DeepSeek (if configured)
 if (deepSeek) {
-  app.post("/api/deepseek/chat", async (req, res) =>
-    await generateCompletionsStream(req, res, deepSeek, systemInstructions, streaming)
-  );
+  app.post("/api/deepseek/chat", async (req, res) => {
+    try {
+      await validateSupportedAssets(req.body.model, "deepseek");
+      await generateCompletionsStream(req, res, deepSeek, systemInstructions, streaming);
+    } catch (e) {
+      res.status(500).send({ message: e.message });
+    }    
+  });
 }
 
 const port = process.env.PORT || 3000;
