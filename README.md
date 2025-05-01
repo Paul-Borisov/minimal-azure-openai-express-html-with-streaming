@@ -23,6 +23,11 @@ Technical stack:
 
 ### Updates and bug fixes:
 
+**May 1, 2025, v1.1.2**
+- Added support for **gpt-4o-mini-tts** (text-to-speech) on both OpenAI and Azure OpenAI endpoints.
+- Added "Voice out" buttons to the bottom-right corner of each AI response, with support for parallel speech sessions.
+- Improved error handling and added hover shadows to the control buttons.
+
 **April 26, 2025, v1.1.1**
 - Revised the logic, split to separate smaller js-files.
 - Added models **gpt-image-1**, **o4-mini**, **gpt-4.1**, **gpt-4.1-mini**, **gpt-4.1-nano**, **chatgpt-4o-latest**
@@ -219,6 +224,7 @@ const targetEndpoints = {
   //"embedding": "azureopenai",
   //"gpt-4o-audio-preview": "azureopenai",
   //"dall-e": "azureopenai",
+  //"tts": "azureopenai",
   "deepseek": "deepseek",
   "default": "openai",
 };

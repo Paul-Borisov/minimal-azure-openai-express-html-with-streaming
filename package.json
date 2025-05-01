@@ -1,6 +1,6 @@
 {
   "name": "openai-stream",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
@@ -13,6 +13,7 @@
     "@azure/identity": "^4.8.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
+    "esm": "^3.2.25",
     "express": "^4.21.2",
     "openai": "^4.89.0"
   },

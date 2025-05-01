@@ -3,6 +3,7 @@ const endpoint = process.env["AZURE_OPENAI_ENDPOINT"];
 const apiVersion = process.env["AZURE_OPENAI_API_VERSION"];
 const defaultDeployment = process.env["AZURE_OPENAI_API_DEPLOYMENT"];
 const { modelDeploymentMap } = require("./azureOpenAIDeploymentMap");
+const { validateSupportedAssets } = require("./shared");
 
 // Determine authentication mode for Azure OpenAI:
 // - Use AZURE_AUTH_MODE env variable if provided.
@@ -18,12 +19,15 @@ if (isAzureOpenAiSupported && azureAuthMode === "key" && !process.env["AZURE_OPE
 }
 
 // Unified helper function for creating AzureOpenAI instance
-const createAzureOpenAI = (req) => {
-  if(!isAzureOpenAiSupported) {
-    throw new Error("Azure OpenAI is not supported. AZURE_OPENAI_ENDPOINT is missing")
+const createAzureOpenAI = async (req) => {
+  if (!isAzureOpenAiSupported) {
+    throw new Error("Azure OpenAI is not supported. AZURE_OPENAI_ENDPOINT is missing");
   }
+  const model = req.body.model ?? defaultDeployment;
+  await validateSupportedAssets(model, "azureopenai");
+
   const { AzureOpenAI } = require("openai");
-  const deployment = modelDeploymentMap[req.body.model] ?? req.body.model ?? defaultDeployment;
+  const deployment = modelDeploymentMap[req.body.model] ?? model;
   if (azureAuthMode === "key") {
     return new AzureOpenAI({
       endpoint,
