@@ -1,8 +1,8 @@
-const { onEnd, onError } = require("./shared");
+import { onEnd, onError } from "./shared.js";
 
 const maxCharactersLimitForOlderTtsModels = 4096;
 
-async function generateAudioOutput(
+export async function generateAudioOutput(
   req,
   res,
   openaiClient
@@ -53,7 +53,3 @@ async function generateAudioOutput(
     }
   }
 }
-
-module.exports = {
-  generateAudioOutput,
-};

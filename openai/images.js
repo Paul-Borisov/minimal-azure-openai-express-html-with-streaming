@@ -1,6 +1,6 @@
-const { onEnd, onError, thinkingHeader } = require("./shared");
+import { onEnd, onError, thinkingHeader } from "./shared.js";
 
-async function generateImage(
+export async function generateImage(
   req,
   res,
   openaiClient
@@ -73,7 +73,3 @@ async function generateImage(
     onError(error, res);
   }
 }
-
-module.exports = {
-  generateImage
-};

@@ -1,4 +1,4 @@
-const { isFirstResponse, isIterable, isStreamUnsupported, isText, onEnd, onError, thinkingHeader } = require("./shared");
+import { isFirstResponse, isIterable, isStreamUnsupported, isText, onEnd, onError, thinkingHeader } from "./shared.js";
 
 /**
  * A generic function to handle streaming responses.
@@ -10,7 +10,7 @@ const { isFirstResponse, isIterable, isStreamUnsupported, isText, onEnd, onError
  * @param {boolean} options.streaming - Whether streaming is enabled.
  * @param {Function} options.parseOutput - Function to parse a response part.
  */
-async function handleStream({
+export async function handleStream({
   res,
   apiCall,
   apiFallback,
@@ -61,7 +61,3 @@ async function handleStream({
     }
   }
 }
-
-module.exports = {
-  handleStream,
-};

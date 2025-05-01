@@ -14,7 +14,7 @@
     const rawOutput = [];
     updateRealtimeRootInnerHtml(formattedChatHistory, formattedUserRequest, [thinkingHeader]);
 
-    const tokenResponse = await fetch("/api/openai/session");
+    const tokenResponse = await fetch(`/api/openai/session?model=${model}`);
     const data = await tokenResponse.json();
     const EPHEMERAL_KEY = data.client_secret.value;
 

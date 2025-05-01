@@ -6,7 +6,7 @@ export const targetEndpoints = {
   //"o3-mini": "azureopenai",
   //"o4-mini": "azureopenai",
   //"embedding": "azureopenai",
-  //"gpt-4o-audio-preview": "azureopenai",
+  //"audio-preview": "azureopenai",
   //"dall-e": "azureopenai",
   //"tts": "azureopenai",
   deepseek: "deepseek",
