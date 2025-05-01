@@ -8,6 +8,7 @@ export const targetEndpoints = {
   //"embedding": "azureopenai",
   //"gpt-4o-audio-preview": "azureopenai",
   //"dall-e": "azureopenai",
+  //"tts": "azureopenai",
   deepseek: "deepseek",
   default: "openai"
 };
@@ -46,4 +47,11 @@ export const optionalImageParameters = {
   style: "natural",
   // low, medium, high, auto (default). dall-e-3 only supports "hd" and "standard" (high => hd is chosen automatically in images.js)
   quality: "high"
+};
+
+export const optionalTextToSpeechParameters = {
+  instructions: "Speak in a cheerful and positive tone.",
+  response_format: "wav", // You can use either wav or pcm for this app
+  // https://platform.openai.com/docs/guides/text-to-speech#voice-options
+  voice: "onyx"
 };

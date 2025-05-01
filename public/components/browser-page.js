@@ -19,6 +19,7 @@ function handleStart() {
   document.querySelectorAll(".text button").forEach(btn => btn.setAttribute("disabled", true));
   btnAbort.classList.remove("invisible");
   btnAbort.removeAttribute("disabled");
+  root.classList.add("inprogress");
 }
 
 function handleStop() {
@@ -30,6 +31,7 @@ function handleStop() {
   if(isRealtimeModel(modelRef.value) && typeof stopRealtimeSession === "function") {
     stopRealtimeSession();
   }
+  root.classList.remove("inprogress");  
 }
 
 function isAudioModel(model) {

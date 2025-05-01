@@ -1,5 +1,6 @@
-import { optionalImageParameters, modelsThatSupportResponses, targetEndpoints } from "./config.js";
 import { formatDataImageSource, formatEmbeddings, getFormattedDataImage, getFormattedOutput } from "./ui.js";
+import { getTargetEntpointForModel } from "./utils.js";
+import { optionalImageParameters } from "./config.js";
 import { resetScroll, scrollDown } from "./scrollManager.js";
 import { setDefaultContent } from "./samples.js";
 
@@ -23,15 +24,8 @@ export async function processRequest(params) {
   } = params;
   
   resetScroll();
-  let endpoint;
-  const modelSupportsResponses = modelsThatSupportResponses.some(e => e === model.toLocaleLowerCase());
-  for (const key of Object.keys(targetEndpoints)) {
-    if (model.includes(key)) {
-      endpoint = targetEndpoints[key];
-      break;
-    }
-  }
-  if (!endpoint) endpoint = targetEndpoints.default;
+
+  const { endpoint, modelSupportsResponses } = getTargetEntpointForModel(model);
 
   const isAudio = isAudioModel(model);
   const isAudioSegment = (line) =>

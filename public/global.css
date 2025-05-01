@@ -10,6 +10,10 @@
   }
 }
 
+#root.inprogress .ai-actions {
+  display: none;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
@@ -116,12 +120,19 @@ p, hr {
 
 button:disabled {
   background-color:#adadad;
+  cursor: auto !important;
+  box-shadow: none !important;
 }
 button {
   border-radius: 5px;
   background-color: #444df5;
   color: white;
   font-size: 110%;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease;
+}
+button:hover {
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
 }
 
 textarea,
@@ -321,10 +332,37 @@ select {
   padding-right: 1.25rem;
 }
 .response {
+  position: relative;
   display:flex;
   gap:15px;
   padding-bottom: 15px;
   padding-right: 10px;
+}
+.response:hover .ai-actions svg {
+  opacity: 1;
+  pointer-events: auto;
+}
+.ai-actions {
+  position: absolute;
+  right: .5rem;
+  bottom: 0;
+  display: flex;
+  gap: .125rem;
+}
+.ai-actions svg {
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out;
+}
+.ai-voice-out {
+  display: grid;
+}
+
+.icon-progress {
+  background-color: lightblue;
+  border-radius: 50%;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .icon-container {
@@ -355,5 +393,10 @@ select {
   }
   100% {
     background-position: -200% 0;
+  }
+}
+@keyframes pulse {
+  50% {
+    opacity: 1;
   }
 }

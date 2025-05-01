@@ -1,5 +1,6 @@
 import { btnSend, btnAbort, btnClear, btnCode, btnText, btnReset, selectedModel, txtPrompt, root } from "./domElements.js";
 import { setInitialText, handleNextPrompt } from "./samples.js";
+import { handleVoiceOut, stopAllVoiceOuts } from "./voiceOut.js";
 
 export let abortController = new AbortController();
 
@@ -17,6 +18,7 @@ export function initEventHandlers(deps) {
     handleStart();
     processRequest(txtPrompt.value, modelRef.value);
     btnAbort.focus();
+    stopAllVoiceOuts();
   });
 
   btnAbort.addEventListener("click", () => {
@@ -42,6 +44,13 @@ export function initEventHandlers(deps) {
     root.innerHTML = "";
     setInitialText(txtPrompt);
     chatHistory.length = 0;
+  });
+
+  root.addEventListener("click", async (e) => {
+    const targetElement = e.target.closest(".voice-out");
+    if (targetElement) {
+      handleVoiceOut(targetElement);
+    }
   });
 
   selectedModel.addEventListener("change", () => {

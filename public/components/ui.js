@@ -1,3 +1,5 @@
+import { voiceOut } from "./icons.js";
+
 export const thinkingHeader = await fetch("/api/progresstext").then(r => r.text()).catch(() => "Thinking...");
 
 const dataImageSourcePrefix = "data:image/";
@@ -15,7 +17,10 @@ export function getFormattedOutput(rawOutput, isAi, openAiIcon) {
   return isAi
     ? `<div class="response">
          <div class="icon-container">${openAiIcon}</div>
-         <div>${marked.marked(rawOutput)}</div>
+         <div class="ai-output">${marked.marked(rawOutput)}</div>
+         <div class="ai-actions">
+          <div class="ai-voice-out" title="Voice out">${voiceOut}</div>
+         </div>
        </div>`
     : `<div class="request">
          <div></div>
@@ -31,10 +36,11 @@ export function formatEmbeddings(embeddings) {
   return "```embeddings\n" + embeddings + "\n```";
 }
 
-export function handleErrorOutput(root, thinkingHeader, trailingHtml) {
-  console.log(trailingHtml)
+export function handleErrorOutput(root, thinkingHeader, trailingHtml, aiOutputElement) {
   if (root.innerHTML.includes(thinkingHeader)) {
     root.innerHTML = root.innerHTML.replace(thinkingHeader, trailingHtml);
+  } else if( aiOutputElement ) {
+    aiOutputElement.innerHTML += trailingHtml;
   } else {
     const response = root.querySelector(".response:last-child div:last-child");
     if (response) {

@@ -14,6 +14,7 @@
 */
 const cors = require("cors");
 const express = require("express");
+const { generateAudioOutput } = require("./openai/textToSpeech");
 const { generateCompletionsStream } = require("./openai/completions");
 const { generateEmbedding } = require("./openai/embeddings");
 const { generateImage } = require("./openai/images");
@@ -86,6 +87,11 @@ app.post(
   openaiHandler(generateImage)
 );
 
+app.post(
+  "/api/openai/speech",
+  openaiHandler(generateAudioOutput)
+);
+
 app.get("/api/openai/session", async (req, res) => {
   const model = req.model || "gpt-4o-mini-realtime-preview-2024-12-17";
   try {
@@ -148,7 +154,12 @@ if( isAzureOpenAiSupported ) {
   app.post(
     "/api/azureopenai/images",
     azureOpenAihandler(generateImage)
-  );  
+  );
+
+  app.post(
+    "/api/azureopenai/speech",
+    azureOpenAihandler(generateAudioOutput)
+  );    
 }
 
 // Endpoint for DeepSeek (if configured)
