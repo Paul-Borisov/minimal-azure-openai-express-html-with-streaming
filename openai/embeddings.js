@@ -1,6 +1,6 @@
-const { onEnd, onError, thinkingHeader } = require("./shared");
+import { onEnd, onError, thinkingHeader } from "./shared.js";
 
-async function generateEmbedding(
+export async function generateEmbedding(
   req,
   res,
   openaiClient
@@ -32,7 +32,3 @@ async function generateEmbedding(
     onError(error, res);
   }
 }
-
-module.exports = {
-  generateEmbedding,
-};

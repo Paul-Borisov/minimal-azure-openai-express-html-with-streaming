@@ -12,19 +12,25 @@
 * 3. Comment out the line AZURE_OPENAI_API_KEY=... in .env
 * 4. Start the server using the command node server-entraid.js. The keyless auth should work.
 */
-const cors = require("cors");
-const express = require("express");
-const { generateAudioOutput } = require("./openai/textToSpeech");
-const { generateCompletionsStream } = require("./openai/completions");
-const { generateEmbedding } = require("./openai/embeddings");
-const { generateImage } = require("./openai/images");
-const { generateResponsesStream } = require("./openai/responses");
-const { OpenAI } = require("openai");
-const path = require("path");
-const os = require("os");
-require("dotenv").config();
-const {isAzureOpenAiSupported, createAzureOpenAI} = require("./openai/azureOpenAI");
-const { thinkingHeader, validateSupportedAssets } = require("./openai/shared");
+import cors from "cors";
+import express from "express";
+import { generateAudioOutput } from "./openai/textToSpeech.js";
+import { generateCompletionsStream } from "./openai/completions.js";
+import { generateEmbedding } from "./openai/embeddings.js";
+import { generateImage } from "./openai/images.js";
+import { generateResponsesStream } from "./openai/responses.js";
+import { OpenAI } from "openai";
+import path from "path";
+import os from "os";
+import dotenv from "dotenv";
+import { isAzureOpenAiSupported, createAzureOpenAI } from "./openai/azureOpenAI.js";
+import { thinkingHeader, validateSupportedAssets } from "./openai/shared.js";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname  = dirname(__filename);
+
+dotenv.config();
 
 const systemInstructions = process.env["SYSTEM_INSTRUCTIONS"];
 const streaming = !/true|1|yes/i.test(process.env["NO_STREAMING"]);
@@ -93,7 +99,7 @@ app.post(
 );
 
 app.get("/api/openai/session", async (req, res) => {
-  const model = req.model || "gpt-4o-mini-realtime-preview-2024-12-17";
+  const model = req.query.model || "gpt-4o-mini-realtime-preview";
   try {
     await validateSupportedAssets(model, "openai");
     const r = await fetch("https://api.openai.com/v1/realtime/sessions", {
@@ -124,7 +130,7 @@ app.get("/api/openai/session", async (req, res) => {
 });
 
 // Endpoints for Azure OpenAI
-if( isAzureOpenAiSupported ) {
+if (isAzureOpenAiSupported) {
   const azureOpenAihandler = (generator, ...args) => {
     return async (req, res) => {
       try {

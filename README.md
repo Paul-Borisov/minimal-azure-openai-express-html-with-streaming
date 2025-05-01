@@ -23,7 +23,14 @@ Technical stack:
 
 ### Updates and bug fixes:
 
-**May 1, 2025, v1.1.2**
+**May 1, 2025, v1.1.3**
+- Migrated server-side logic from CommonJS to ECMAScript modules.
+  - Also removed the interim **esm** package, which poorly worked in container apps.
+- Fixed bugs affecting support for **gpt-4o-realtime-preview** and **gpt-4o-mini-realtime-preview**.
+  - Corrected handling of the "model" query-string parameter in /api/openai/session.
+  - Corrected the default reference. It was set to the outdated **gpt-4o-mini-realtime-preview-2024-12-17**
+
+**April 30, 2025, v1.1.2**
 - Added support for **gpt-4o-mini-tts** (text-to-speech) on both OpenAI and Azure OpenAI endpoints.
 - Added "Voice out" buttons to the bottom-right corner of each AI response, with support for parallel speech sessions.
 - Improved error handling and added hover shadows to the control buttons.

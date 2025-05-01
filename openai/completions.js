@@ -1,7 +1,7 @@
-const { handleStream } = require("./streaming");
-const { isText, onEnd, onError } = require("./shared");
+import { handleStream } from "./streaming.js";
+import { isText, onEnd, onError } from "./shared.js";
 
-async function generateCompletionsStream(req, res, openaiClient, systemInstructions, streaming) {
+export async function generateCompletionsStream(req, res, openaiClient, systemInstructions, streaming) {
   const messages = req.body.messages;
   const model = req.body.model;
 
@@ -94,7 +94,3 @@ async function generateCompletionsStream(req, res, openaiClient, systemInstructi
     model
   });
 }
-
-module.exports = {
-  generateCompletionsStream,
-};
