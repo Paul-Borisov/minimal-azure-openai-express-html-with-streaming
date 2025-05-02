@@ -131,7 +131,7 @@ app.get("/api/openai/session", async (req, res) => {
 
 // Endpoints for Azure OpenAI
 if (isAzureOpenAiSupported) {
-  const azureOpenAihandler = (generator, ...args) => {
+  const azureOpenaiHandler = (generator, ...args) => {
     return async (req, res) => {
       try {
         const azOpenai = await createAzureOpenAI(req);
@@ -144,27 +144,27 @@ if (isAzureOpenAiSupported) {
 
   app.post(
     "/api/azureopenai/chat",
-    azureOpenAihandler(generateCompletionsStream, systemInstructions, streaming)
+    azureOpenaiHandler(generateCompletionsStream, systemInstructions, streaming)
   );
   
   app.post(
     "/api/azureopenai/responses",
-    azureOpenAihandler(generateResponsesStream, systemInstructions, streaming)
+    azureOpenaiHandler(generateResponsesStream, systemInstructions, streaming)
   );
   
   app.post(
     "/api/azureopenai/embeddings",
-    azureOpenAihandler(generateEmbedding)
+    azureOpenaiHandler(generateEmbedding)
   );
 
   app.post(
     "/api/azureopenai/images",
-    azureOpenAihandler(generateImage)
+    azureOpenaiHandler(generateImage)
   );
 
   app.post(
     "/api/azureopenai/speech",
-    azureOpenAihandler(generateAudioOutput)
+    azureOpenaiHandler(generateAudioOutput)
   );    
 }
 
