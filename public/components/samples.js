@@ -10,6 +10,7 @@ export const samples = [
   { text: "Generate CSV-table for all weeks of 2025. Columns: WeekNumber, StartDate;, EndDate. Use semicolon as column delimiter and ISO-date format. Start day is Monday. End day is Friday. Wrap into ```" },
   { image: "Elon Mask in the clothing of Finnish flag colors in the role of a textcrunch service salesman"},
   { image_dalle_2: "Natural landscape with mountains and ocean"},
+  { video: "A quick brown bear is climbing Mount Teide on Tenerife" },
   { default: "Generate test response of 100 characters" }
 ];
 

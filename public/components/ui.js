@@ -3,6 +3,7 @@ import { voiceOut } from "./icons.js";
 export const thinkingHeader = await fetch("/api/progresstext").then(r => r.text()).catch(() => "Thinking...");
 
 const dataImageSourcePrefix = "data:image/";
+export const dataVideoSourcePrefix = "data:video/";
 
 export function getFormattedDataImage(src) {
   const img = document.createElement("img");
@@ -11,9 +12,18 @@ export function getFormattedDataImage(src) {
   return img.outerHTML;
 }
 
+export function getFormattedDataVideo(src) {
+  const video = document.createElement("video");
+  video.src = src;
+  video.controls = true;
+  video.loop = true;
+  return `<div class="video-full">${video.outerHTML}</div>`;
+}
+
 export function getFormattedOutput(rawOutput, isAi, openAiIcon) {
   if (rawOutput?.startsWith(dataImageSourcePrefix)) return getFormattedDataImage(rawOutput);
-  
+  if (rawOutput?.startsWith(dataVideoSourcePrefix)) return getFormattedDataVideo(rawOutput);
+
   return isAi
     ? `<div class="response">
          <div class="icon-container">${openAiIcon}</div>
@@ -30,6 +40,10 @@ export function getFormattedOutput(rawOutput, isAi, openAiIcon) {
 
 export function formatDataImageSource(src, mimeType) {
   return `${dataImageSourcePrefix}${mimeType};base64,${src}`;
+}
+
+export function formatDataVideoSource(src, mimeType) {
+  return `${dataVideoSourcePrefix}${mimeType};base64,${src}`;
 }
 
 export function formatEmbeddings(embeddings) {

@@ -8,6 +8,7 @@ export const targetEndpoints = {
   //"embedding": "azureopenai",
   //"audio-preview": "azureopenai",
   //"dall-e": "azureopenai",
+  "sora": "azureopenai",
   //"tts": "azureopenai",
   deepseek: "deepseek",
   default: "openai"
@@ -54,4 +55,18 @@ export const optionalTextToSpeechParameters = {
   response_format: "wav", // You can use either wav or pcm for this app
   // https://platform.openai.com/docs/guides/text-to-speech#voice-options
   voice: "onyx"
+};
+
+/*
+https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/video-generation
+Sora supports the following output resolution dimensions:
+480x480, 480x854, 854x480, 720x720, 720x1280, 1280x720, 1080x1080, 1080x1920, 1920x1080.
+Sora supports video durations between 1 and 20 seconds.
+*/
+export const optionalVideoParameters = {
+  type: "video_gen",
+  width: 854,
+  height: 480,
+  n_seconds: 10,
+  n_variants: 1,
 };

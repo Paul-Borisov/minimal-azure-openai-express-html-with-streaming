@@ -23,6 +23,22 @@ Technical stack:
 
 ### Updates and bug fixes:
 
+**June 15, 2025, v1.1.32**
+- Added support for Azure OpenAI Sora model (preview).
+  - This model is available on eastus2 deployments of Azure OpenAI. It does not support keyless authentication yet.
+- Sora supports the following output resolution dimensions:
+  - 480x480, 480x854, 854x480, 720x720, 720x1280, 1280x720, 1080x1080, 1080x1920, 1920x1080.
+  - Sora supports video durations from 1 to 20 seconds — videos at the 20-second limit are capped at 1080×1080 resolution.
+    - Generating a 5-second video usually takes less than a minute.
+    - Generating a 15- to 20-second video usually takes three to five minutes.
+  - You can download the generated video by clicking the three-dot menu in the bottom-right corner.
+  - You should add the following settings into .env file to support Sora deployment
+  ```bash
+  AZURE_OPENAI_ENDPOINT_SORA=https://<your-azure-openai-instance-for-sora>.openai.azure.com
+  AZURE_OPENAI_API_KEY_SORA=<your apiKey for Azure Open AI Sora instance>
+  ```
+  ![Video generation with Sora on Azure OpenAI](docs/images/7_video-generation-with-sora-aoi.png "Video generation with Sora on Azure OpenAI")
+
 **May 1, 2025, v1.1.3**
 - Migrated server-side logic from CommonJS to ECMAScript modules.
   - Also removed the interim **esm** package, which poorly worked in container apps.

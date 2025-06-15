@@ -14,16 +14,17 @@
 */
 import cors from "cors";
 import express from "express";
+import { createAzureOpenAI, isAzureOpenAiSupported, isAzureOpenAiInstanceSupported } from "./openai/azureOpenAI.js";
 import { generateAudioOutput } from "./openai/textToSpeech.js";
 import { generateCompletionsStream } from "./openai/completions.js";
 import { generateEmbedding } from "./openai/embeddings.js";
 import { generateImage } from "./openai/images.js";
 import { generateResponsesStream } from "./openai/responses.js";
+import { generateVideoOutput } from "./openai/video.js";
 import { OpenAI } from "openai";
 import path from "path";
 import os from "os";
 import dotenv from "dotenv";
-import { isAzureOpenAiSupported, createAzureOpenAI } from "./openai/azureOpenAI.js";
 import { thinkingHeader, validateSupportedAssets } from "./openai/shared.js";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -165,7 +166,24 @@ if (isAzureOpenAiSupported) {
   app.post(
     "/api/azureopenai/speech",
     azureOpenaiHandler(generateAudioOutput)
-  );    
+  );
+}
+
+const azureOpenAiInstanceSuffixSora = "_SORA";
+if (isAzureOpenAiInstanceSupported(azureOpenAiInstanceSuffixSora)) {
+  const azureOpenaiHandler = (generator, ...args) => {
+    return async (req, res) => {
+      try {
+        await generator(req, res, azureOpenAiInstanceSuffixSora, ...args);
+      } catch (e) {
+        res.status(500).send({ message: e.message });
+      }
+    };
+  };
+  app.post(
+    "/api/azureopenai/video",
+    azureOpenaiHandler(generateVideoOutput)
+  );
 }
 
 // Endpoint for DeepSeek (if configured)
