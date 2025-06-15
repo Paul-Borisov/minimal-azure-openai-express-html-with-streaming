@@ -14,29 +14,42 @@ import { validateSupportedAssets } from "./shared.js";
 // Determine authentication mode for Azure OpenAI:
 // - Use AZURE_AUTH_MODE env variable if provided.
 // - Otherwise, default to "key" if AZURE_OPENAI_API_KEY is set, else "keyless".
-const azureAuthMode = process.env["AZURE_AUTH_MODE"] || (process.env["AZURE_OPENAI_API_KEY"] ? "key" : "keyless");
 
 export const isAzureOpenAiSupported = !!endpoint;
 
-if (isAzureOpenAiSupported && azureAuthMode === "key" && !process.env["AZURE_OPENAI_API_KEY"]) {
-  throw new Error("AZURE_OPENAI_API_KEY must be present for key authentication");
-} else if (isAzureOpenAiSupported && azureAuthMode === "keyless" && process.env["AZURE_OPENAI_API_KEY"]) {
-  throw new Error("AZURE_OPENAI_API_KEY must be commented out for keyless authentication");
+export const isAzureOpenAiInstanceSupported = (instanceSuffix) => {
+  const currentEndpoint = process.env[`AZURE_OPENAI_ENDPOINT${instanceSuffix}`];
+  return !!currentEndpoint;
+};
+
+export const ensureAccessMeans = (instanceSuffix) => {
+  const currentEndpoint = process.env[`AZURE_OPENAI_ENDPOINT${instanceSuffix}`];
+  const isAoiSupported = instanceSuffix ? isAzureOpenAiSupported : isAzureOpenAiInstanceSupported(instanceSuffix);
+  if (!isAoiSupported) {
+    throw new Error(`Azure OpenAI is not supported. AZURE_OPENAI_ENDPOINT${instanceSuffix} is missing`);
+  }
+  const envVarApiKey = `AZURE_OPENAI_API_KEY${instanceSuffix}`;
+  const azureAuthMode = process.env["AZURE_AUTH_MODE"] || (process.env[envVarApiKey] ? "key" : "keyless");
+  if (isAoiSupported && azureAuthMode === "key" && !process.env[envVarApiKey]) {
+    throw new Error(`${envVarApiKey} must be present for key authentication`);
+  } else if (isAoiSupported && azureAuthMode === "keyless" && process.env[envVarApiKey]) {
+    throw new Error(`${envVarApiKey} must be commented out for keyless authentication`);
+  }
+
+  return { currentEndpoint, envVarApiKey, azureAuthMode };
 }
 
 // Unified helper function for creating AzureOpenAI instance
-export const createAzureOpenAI = async (req) => {
-  if (!isAzureOpenAiSupported) {
-    throw new Error("Azure OpenAI is not supported. AZURE_OPENAI_ENDPOINT is missing");
-  }
+export const createAzureOpenAI = async (req, instanceSuffix = "") => {
+  const { currentEndpoint, envVarApiKey, azureAuthMode } = ensureAccessMeans(instanceSuffix);
   const model = req.body.model ?? defaultDeployment;
   await validateSupportedAssets(model, "azureopenai");
 
   const deployment = modelDeploymentMap[req.body.model] ?? model;
   if (azureAuthMode === "key") {
     return new AzureOpenAI({
-      endpoint,
-      azureApiKey: process.env["AZURE_OPENAI_API_KEY"],
+      currentEndpoint,
+      azureApiKey: process.env[envVarApiKey],
       apiVersion,
       deployment,
     });

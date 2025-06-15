@@ -6,7 +6,10 @@ import { initEventHandlers, abortController } from "./eventHandlers.js";
 import { thinkingHeader, handleErrorOutput } from "./ui.js";
 
 // Local state and controllers.
-const modelRef = { value: selectedModel.selectedOptions[0].value };
+const modelRef = { 
+  value: selectedModel.selectedOptions[0].value,
+  defaultParams: selectedModel.selectedOptions[0].dataset.params
+};
 let audioStreamingManager = null;
 const chatHistory = [];
 
@@ -50,11 +53,16 @@ function isRealtimeModel(model) {
   return /realtime/i.test(model);
 }
 
+function isVideoModel(model) {
+  return /sora/i.test(model);
+}
+
 // Initialize event handlers and pass necessary dependencies.
 initEventHandlers({
-  processRequest: (content, model) => processRequest({
+  processRequest: (content, model, defaultParams) => processRequest({
     content,
     model,
+    defaultParams,
     chatHistory,
     root,
     abortController,
@@ -64,6 +72,7 @@ initEventHandlers({
     isEmbeddingModel,
     isImageModel,
     isRealtimeModel,
+    isVideoModel,
     handleStop,
     handleErrorOutput,
     txtPrompt,
@@ -72,6 +81,7 @@ initEventHandlers({
   handleStart,
   handleStop,
   isImageModel,
+  isVideoModel,
   chatHistory,
   modelRef
 });

@@ -10,13 +10,14 @@ export function initEventHandlers(deps) {
     handleStart,
     handleStop,
     isImageModel,
+    isVideoModel,
     chatHistory,
     modelRef
   } = deps;
   
   btnSend.addEventListener("click", () => {
     handleStart();
-    processRequest(txtPrompt.value, modelRef.value);
+    processRequest(txtPrompt.value, modelRef.value, modelRef.defaultParams);
     btnAbort.focus();
     stopAllVoiceOuts();
   });
@@ -55,8 +56,11 @@ export function initEventHandlers(deps) {
 
   selectedModel.addEventListener("change", () => {
     modelRef.value = selectedModel.selectedOptions[0].value;
+    modelRef.defaultParams = selectedModel.selectedOptions[0].dataset.params;
     if (isImageModel(modelRef.value)) {
       handleNextPrompt(modelRef.value !== "dall-e-2" ? "image" : "image_dalle_2", txtPrompt);
+    } else if (isVideoModel(modelRef.value)) {
+      handleNextPrompt("video", txtPrompt);
     }
   });
 

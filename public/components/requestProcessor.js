@@ -1,6 +1,14 @@
-import { formatDataImageSource, formatEmbeddings, getFormattedDataImage, getFormattedOutput } from "./ui.js";
+import { 
+  dataVideoSourcePrefix,
+  formatDataImageSource,
+  formatDataVideoSource,
+  formatEmbeddings,
+  getFormattedDataImage,
+  getFormattedDataVideo,
+  getFormattedOutput
+} from "./ui.js";
 import { getTargetEntpointForModel } from "./utils.js";
-import { optionalImageParameters } from "./config.js";
+import { optionalImageParameters, optionalVideoParameters } from "./config.js";
 import { resetScroll, scrollDown } from "./scrollManager.js";
 import { setDefaultContent } from "./samples.js";
 
@@ -8,6 +16,7 @@ export async function processRequest(params) {
   const {
     content,
     model,
+    defaultParams,
     chatHistory,
     root,
     abortController,
@@ -17,6 +26,7 @@ export async function processRequest(params) {
     isEmbeddingModel,
     isImageModel,
     isRealtimeModel,
+    isVideoModel,
     handleStop,
     handleErrorOutput,
     txtPrompt,
@@ -48,19 +58,28 @@ export async function processRequest(params) {
   let endpointUri;
   const isEmbedding = isEmbeddingModel(model);
   const isImage = isImageModel(model);
+  const isVideo = isVideoModel(model);
   if (isEmbedding) {
     endpointUri = `${window.location.origin}/api/${endpoint}/embeddings`;
   } else if (isImage) {
     endpointUri = `${window.location.origin}/api/${endpoint}/images`;
+  } else if (isVideo) {
+    endpointUri = `${window.location.origin}/api/${endpoint}/video`;  
   } else if (modelSupportsResponses) {
     endpointUri = `${window.location.origin}/api/${endpoint}/responses`;
   } else {
     endpointUri = `${window.location.origin}/api/${endpoint}/chat`;
   }
-  
+
   const userContent = content ? content : setDefaultContent(txtPrompt);
+  const sanitizedChatHistory = chatHistory.map((entry) => {
+    if (entry.content.startsWith(dataVideoSourcePrefix)) {
+      return { role: entry.role, content: "removed video" };
+    }
+    return entry;
+  });
   const messages = [
-    ...chatHistory,
+    ...sanitizedChatHistory,
     { role: "user", content: userContent }
   ];
 
@@ -109,6 +128,17 @@ export async function processRequest(params) {
         body: JSON.stringify({ model, prompt: userContent, ...optionalImageParameters }),
         signal: abortController.signal,
       });
+    } else if (isVideo) {
+      const additionalParams = {
+        ...optionalVideoParameters,
+        ...(defaultParams ? JSON.parse(defaultParams) : {})
+      };
+      res = await fetch(endpointUri, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({model, prompt: userContent, ...additionalParams}),
+        signal: abortController.signal,
+      });
     } else {
       res = await fetch(endpointUri, {
         method: "POST",
@@ -146,6 +176,13 @@ export async function processRequest(params) {
         root.innerHTML = `${formattedChatHistory}\n${formattedUserRequest}\n${formattedAiOutput}`;
         scrollDown(root);
       };
+      const formatVideoOutput = () => {
+        const videoTag = getFormattedDataVideo(
+          formatDataVideoSource(outputContent, "mp4")
+        );
+        root.innerHTML = `${formattedChatHistory}\n${formattedUserRequest}\n${videoTag}`;
+        setTimeout(() => scrollDown(root), 1000);
+      };      
       if (isImage) {
         if (done) {
           if (isError) {
@@ -163,6 +200,23 @@ export async function processRequest(params) {
         return;
       }
       
+      if (isVideo) {
+        if (done) {
+          if (isError) {
+            formatTextOutput();
+          } else {
+            formatVideoOutput();
+          }
+        } else {
+          if (outputContent.includes(thinkingHeader)) {
+            formatTextOutput();
+          } else {
+            // Ignore this intermediate output for the partial base64 image content
+          }
+        }
+        return;
+      }
+
       formattedAiOutput = isEmbedding
       ? getFormattedOutput(formatEmbeddings(outputContent), true, openAiIcon)
       : getFormattedOutput(outputContent, true, openAiIcon);
@@ -212,6 +266,8 @@ export async function processRequest(params) {
             aiContent = formatEmbeddings(rawOutput.join(""));
           } else if (isImage) {
             aiContent = formatDataImageSource(rawOutput.join(""), optionalImageParameters.output_format);
+          } else if (isVideo) {
+            aiContent = formatDataVideoSource(rawOutput.join(""), "mp4");
           } else {
             aiContent = rawOutput.join("");
           }

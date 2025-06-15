@@ -151,6 +151,12 @@ select {
   width: -webkit-fill-available;
 }
 
+.video-full {
+  width: -webkit-fill-available;
+  display: flex;
+  justify-content: flex-start;
+}
+
 @media (max-width: 1024px) {
   .box,
   .text {
