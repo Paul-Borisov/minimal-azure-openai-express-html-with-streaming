@@ -225,6 +225,48 @@ export async function processRequest(params) {
       scrollDown(root);
     };
 
+    const reJobId = /^jobId: (.+)/;
+    const handleLongResponseForVideoGeneration = async (endpointUri, line) => {
+      if (!isVideo || !reJobId.test(line)) return false;
+      const jobId = line.match(reJobId)[1];
+      let result = "";
+      const delayBetweenStatusChecksMs = 10000;
+      const maxIterations = 90; // 10s x 90 = 15min
+      let counter = 0;
+      while (!result) {
+        counter++;
+        if (counter > maxIterations) {
+          isError = true;
+          if (!root.innerHTML.length) root.innerHTML += " ";
+          throw Error(`Max waiting time has been reached: ${(delayBetweenStatusChecksMs * maxIterations / 60000).toFixed(2).replace(".00","")} min.`)
+        }
+        await new Promise((resolve) => setTimeout(resolve, delayBetweenStatusChecksMs));
+        const response = await fetch(`${endpointUri}/${jobId}`, {
+          method: "GET",
+          signal: abortController.signal,
+        });
+        if (response.ok) {
+          result = await response.text();
+        } else {
+          isError = true;
+          if (!root.innerHTML.length) root.innerHTML += " ";
+          const errorMessage = `${response.status}, ${response.statusText || "Network response was not ok"}`;
+          throw new Error(errorMessage);
+        }
+      }
+      chatHistory.push({ role: "user", content: userContent });
+      chatHistory.push({
+        role: "assistant",
+        content: formatDataVideoSource(result, "mp4")
+      });
+      done = true;
+      rawOutput.length = 0;
+      rawOutput.push(result);
+      updateRootInnerHtml();
+      handleStop();
+      return true;
+    };
+
     while (!done) {
       const { value, done: doneReading } = await reader.read();
       done = doneReading;
@@ -247,6 +289,10 @@ export async function processRequest(params) {
           }
           continue;
         }
+        if (isVideo) {
+          const isVideoProcessed = await handleLongResponseForVideoGeneration(endpointUri, line);
+          if (isVideoProcessed) return;
+        }
         const msg = line.replace("data: ", "");
         if (rawOutput.length === 2 && rawOutput[0] === thinkingHeader) {
           rawOutput.length = 0;
@@ -266,8 +312,8 @@ export async function processRequest(params) {
             aiContent = formatEmbeddings(rawOutput.join(""));
           } else if (isImage) {
             aiContent = formatDataImageSource(rawOutput.join(""), optionalImageParameters.output_format);
-          } else if (isVideo) {
-            aiContent = formatDataVideoSource(rawOutput.join(""), "mp4");
+          // } else if (isVideo) {
+          //   aiContent = formatDataVideoSource(rawOutput.join(""), "mp4");
           } else {
             aiContent = rawOutput.join("");
           }
