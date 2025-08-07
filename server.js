@@ -20,7 +20,7 @@ import { generateCompletionsStream } from "./openai/completions.js";
 import { generateEmbedding } from "./openai/embeddings.js";
 import { generateImage } from "./openai/images.js";
 import { generateResponsesStream } from "./openai/responses.js";
-import { generateVideoOutput } from "./openai/video.js";
+import { generateVideoOutput, getGeneratedVideo } from "./openai/video.js";
 import { OpenAI } from "openai";
 import path from "path";
 import os from "os";
@@ -183,6 +183,10 @@ if (isAzureOpenAiInstanceSupported(azureOpenAiInstanceSuffixSora)) {
   app.post(
     "/api/azureopenai/video",
     azureOpenaiHandler(generateVideoOutput)
+  );
+  app.get(
+    "/api/azureopenai/video/:jobId",
+    azureOpenaiHandler(getGeneratedVideo)
   );
 }
 

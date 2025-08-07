@@ -62,60 +62,75 @@ export async function generateVideoOutput(
     return;
   }
   const data = await response.json();
-  //console.log("Full response JSON:", data);
+  
   const jobId = data.id;
-  //console.log(`Job created: ${jobId}`);
-  // 2. Poll until the job is complete
-  const endpointUriJobStatus = `${endpoint}/openai/v1/video/generations/jobs/${jobId}?api-version=${apiVersion}`;
-  let jobStatusData, jobStatus;
-  do {
-    await new Promise((resolve) => setTimeout(resolve, 5000));
-    const responseJobStatus = await fetch(endpointUriJobStatus, { headers: { "api-key": apiKey } });
-    if (!responseJobStatus.ok) {
-      onError(
-        new Error(`Status poll failed: ${responseJobStatus.status} ${responseJobStatus.statusText}`),
-        res
-      );
-      return;
-    }
-    jobStatusData = await responseJobStatus.json();
-    jobStatus = jobStatusData.status;
-    console.log(`Job status: ${jobStatus}`);
-  } while (!["succeeded", "failed", "cancelled"].includes(jobStatus));
+  res.write(`jobId: ${jobId}\r`);
+  res.end();
+}
 
-  // Step 3. Download the generated video; if any.
+export async function getGeneratedVideo(
+  req,
+  res,
+  instanceSuffix
+) {
+  const jobId = req.params.jobId;
+
+  res.setHeader("Content-Type", "text/plain");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
+  if (!jobId) {
+    res.statusMessage = "Invalid request parameters, .../:jobId expected";
+    res.status(400).write(res.statusMessage);
+    return;
+  }
+
+  const { currentEndpoint: endpoint, envVarApiKey, azureAuthMode } = ensureAccessMeans(instanceSuffix);
+  if( azureAuthMode !== "key" ) {
+    res.statusMessage = `Unsupported auth mode: ${azureAuthMode}`;
+    res.status(500).write(res.statusMessage);
+    return    
+  }
+
+  const apiKey = process.env[envVarApiKey];
+  const apiVersion = "preview";
+
+  const endpointUriJobStatus = `${endpoint}/openai/v1/video/generations/jobs/${jobId}?api-version=${apiVersion}`;
+  const responseJobStatus = await fetch(endpointUriJobStatus, { headers: { "api-key": apiKey } });
+  if (!responseJobStatus.ok) {
+    res.statusMessage = `Status poll failed: ${responseJobStatus.status} ${responseJobStatus.statusText}`;
+    res.status(500).write(res.statusMessage);
+    return;
+  }
+  const jobStatusData = await responseJobStatus.json();
+  const jobStatus = jobStatusData.status;
+  console.log(`Job status for video generation ${jobId}: ${jobStatus}`);
+
   if (jobStatus === "succeeded") {
     const generations = jobStatusData.generations ?? [];
     if (!generations.length) {
-      onError(
-        new Error("No generations found in job result."),
-        res
-      );
+      res.statusMessage = "No video generations found in job results.";
+      res.status(500).write(res.statusMessage);      
       return;
     }
 
     const generationId = generations[0].id;
     const videoUrl = `${endpoint}/openai/v1/video/generations/${generationId}/content/video?api-version=${apiVersion}`;
+    console.log(`Downloading video from the URL: ${videoUrl}`);
     const responseVideo = await fetch(videoUrl, { headers: { "api-key": apiKey } });
 
     if (!responseVideo.ok) {
-      onError(
-        new Error(`Video download failed: ${responseVideo.status} ${responseVideo.statusText}`),
-        res
-      );
+      res.statusMessage = `Video download failed: ${responseVideo.status} ${responseVideo.statusText}`;
+      res.status(500).write(res.statusMessage);
       return;
     }
 
+    console.log("Sending downloaded video to client");
     const arrayBuffer = await responseVideo.arrayBuffer();
     const videoBuffer = Buffer.from(arrayBuffer);
     const base64Video = videoBuffer.toString("base64");
-    res.write(`data: ${base64Video}\r`);
-    onEnd(res);
-  } else {
-    onError(
-      new Error(`Video generation job failed. Status: ${jobStatus}`),
-      res
-    );
-    return;
+    res.write(base64Video);
+    console.log("Video sent to client");
   }
+  res.end();
 }

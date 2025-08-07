@@ -1,4 +1,7 @@
 export const targetEndpoints = {
+  // "gpt-5-mini": "azureopenai",
+  // "gpt-5-nano": "azureopenai",
+  // "gpt-5-chat-latest": "azureopenai",
   //"4o": "azureopenai",
   //"4.1": "azureopenai",
   //"o1": "azureopenai",
