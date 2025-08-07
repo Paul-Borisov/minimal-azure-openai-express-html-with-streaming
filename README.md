@@ -23,6 +23,14 @@ Technical stack:
 
 ### Updates and bug fixes:
 
+**August 7, 2025, v1.1.33**
+- Added support for the models gpt-5, gpt-5-mini, gpt-5-nano, gpt-5-chat-latest.
+  - The models gpt-5-mini, gpt-5-nano, gpt-5-chat are also available on Azure OpenAI.
+- Improved generations of long Sora videos (15s+) to support deployments to Azure Container Apps.
+  - Azure Container Apps (ACA) have the the problem with too short timeouts that abrupt long running requests after 4 min.
+  - The hotfix proposed by Microsoft does not work correctly as of today.
+  - I separated image generation and job status polling. This solved the problem with ACA timeouts.
+
 **June 15, 2025, v1.1.32**
 - Added support for Azure OpenAI Sora model (preview).
   - This model is available on eastus2 deployments of Azure OpenAI. It does not support keyless authentication yet.
