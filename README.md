@@ -29,7 +29,7 @@ Technical stack:
 - Improved generations of long Sora videos (15s+) to support deployments to Azure Container Apps.
   - Azure Container Apps (ACA) have the the problem with too short timeouts that abrupt long running requests after 4 min.
   - The hotfix proposed by Microsoft does not work correctly as of today.
-  - I separated image generation and job status polling. This solved the problem with ACA timeouts.
+  - I separated the logic for image generation and job status polling. This solved the problem with ACA timeouts.
 
 **June 15, 2025, v1.1.32**
 - Added support for Azure OpenAI Sora model (preview).
