@@ -1,6 +1,6 @@
 {
   "name": "minimal-azure-openai-express-stream",
-  "version": "1.1.32",
+  "version": "1.1.33",
   "type": "module",
   "main": "server.js",
   "scripts": {
