@@ -35,7 +35,7 @@ Technical stack:
   - Set up at least "pay-as-you-go" billing - Google video models are not free.
   - Details on pricing: https://ai.google.dev/gemini-api/docs/pricing
 
-  ![Video generations with Google Veo3 and Veo2](docs/images/8_video-generation-with-google-veo3-and-veo2.png "Video generations with Google Veo3 and Veo2")
+  [![Video generations with Google Veo3 and Veo2](docs/images/8_video-generation-with-google-veo3-and-veo2.png "Video generations with Google Veo3 and Veo2")](docs/images/american-man-is-talking-about-classic-sport-cars.mp4)
 
 **August 7, 2025, v1.1.33**
 - Added support for the models gpt-5, gpt-5-mini, gpt-5-nano, gpt-5-chat-latest.
