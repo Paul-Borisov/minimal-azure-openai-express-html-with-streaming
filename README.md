@@ -35,6 +35,8 @@ Technical stack:
   - Set up at least "pay-as-you-go" billing - Google video models are not free.
   - Details on pricing: https://ai.google.dev/gemini-api/docs/pricing
 
+  ![Video generations with Google Veo3 and Veo2](docs/images/8_video-generation-with-google-veo3-and-veo2.png "Video generations with Google Veo3 and Veo2")
+
 **August 7, 2025, v1.1.33**
 - Added support for the models gpt-5, gpt-5-mini, gpt-5-nano, gpt-5-chat-latest.
   - The models gpt-5-mini, gpt-5-nano, gpt-5-chat are also available on Azure OpenAI.
@@ -57,7 +59,7 @@ Technical stack:
   AZURE_OPENAI_ENDPOINT_SORA=https://<your-azure-openai-instance-for-sora>.openai.azure.com
   AZURE_OPENAI_API_KEY_SORA=<your apiKey for Azure Open AI Sora instance>
   ```
-  ![Video generation with Sora on Azure OpenAI](docs/images/7_video-generation-with-sora-aoi.png "Video generation with Sora on Azure OpenAI")
+  ![Video generations with Sora on Azure OpenAI](docs/images/7_video-generation-with-sora-aoi.png "Video generations with Sora on Azure OpenAI")
 
 **May 1, 2025, v1.1.3**
 - Migrated server-side logic from CommonJS to ECMAScript modules.
