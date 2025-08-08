@@ -31,7 +31,7 @@ Technical stack:
 - To use these models:
   - Register at https://console.cloud.google.com
   - Create a project at https://console.cloud.google.com/cloud-resource-manager
-  - Obtain an API KEY from https://aistudio.google.com/app/apikey, and save add to your .env file as GENIMI_API_KEY=\<your apikey\> (see .env.example for reference).
+  - Obtain an API KEY from https://aistudio.google.com/app/apikey, and save add to your .env file as GEMINI_API_KEY=\<your apikey\> (see .env.example for reference).
   - Set up at least "pay-as-you-go" billing - Google video models are not free.
   - Details on pricing: https://ai.google.dev/gemini-api/docs/pricing
 
