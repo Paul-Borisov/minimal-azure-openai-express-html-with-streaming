@@ -64,7 +64,7 @@ export async function processRequest(params) {
   } else if (isImage) {
     endpointUri = `${window.location.origin}/api/${endpoint}/images`;
   } else if (isVideo) {
-    endpointUri = `${window.location.origin}/api/${endpoint}/video`;  
+    endpointUri = `${window.location.origin}/api/${endpoint}/video`;
   } else if (modelSupportsResponses) {
     endpointUri = `${window.location.origin}/api/${endpoint}/responses`;
   } else {

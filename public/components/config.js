@@ -12,6 +12,7 @@ export const targetEndpoints = {
   //"audio-preview": "azureopenai",
   //"dall-e": "azureopenai",
   "sora": "azureopenai",
+  "veo": "google",
   //"tts": "azureopenai",
   deepseek: "deepseek",
   default: "openai"
