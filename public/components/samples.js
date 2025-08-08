@@ -11,6 +11,7 @@ export const samples = [
   { image: "Elon Mask in the clothing of Finnish flag colors in the role of a textcrunch service salesman"},
   { image_dalle_2: "Natural landscape with mountains and ocean"},
   { video: "A quick brown bear is climbing Mount Teide on Tenerife" },
+  { video_with_sound: "American man is talking about classic sports cars" },
   { default: "Generate test response of 100 characters" }
 ];
 
