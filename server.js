@@ -21,6 +21,7 @@ import { generateEmbedding } from "./openai/embeddings.js";
 import { generateImage } from "./openai/images.js";
 import { generateResponsesStream } from "./openai/responses.js";
 import { generateVideoOutput, getGeneratedVideo } from "./openai/video.js";
+import { generateVideoVeo3, getGeneratedVideoVeo3 } from "./google/videoVeo3.js";
 import { OpenAI } from "openai";
 import path from "path";
 import os from "os";
@@ -199,6 +200,26 @@ if (deepSeek) {
     } catch (e) {
       res.status(500).send({ message: e.message });
     }    
+  });
+}
+
+const isGoogleAiSupported = !!process.env["GEMINI_API_KEY"];
+if (isGoogleAiSupported) {
+  app.post("/api/google/video", async (req, res) => {
+    try {
+      await generateVideoVeo3(req, res);
+    } catch (e) {
+      res.statusMessage = e.message;
+      res.status(500).send({ message: res.statusMessage });
+    }      
+  });
+  app.get("/api/google/video/:jobId", async (req, res) => {
+    try {
+      await getGeneratedVideoVeo3(req, res);
+    } catch (e) {
+      res.statusMessage = e.message;
+      res.status(500).send({ message: res.statusMessage });
+    }
   });
 }
 

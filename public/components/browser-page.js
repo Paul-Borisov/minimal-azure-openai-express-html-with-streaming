@@ -54,7 +54,7 @@ function isRealtimeModel(model) {
 }
 
 function isVideoModel(model) {
-  return /sora/i.test(model);
+  return /sora|veo-[23]/i.test(model);
 }
 
 // Initialize event handlers and pass necessary dependencies.

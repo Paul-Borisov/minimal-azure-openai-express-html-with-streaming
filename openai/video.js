@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import { ensureAccessMeans } from "./azureOpenAI.js"
-import { onEnd, onError, thinkingHeader } from "./shared.js";
+import { onError, thinkingHeader } from "./shared.js";
 
 dotenv.config();
 
@@ -89,7 +89,7 @@ export async function getGeneratedVideo(
   if( azureAuthMode !== "key" ) {
     res.statusMessage = `Unsupported auth mode: ${azureAuthMode}`;
     res.status(500).write(res.statusMessage);
-    return    
+    return;
   }
 
   const apiKey = process.env[envVarApiKey];

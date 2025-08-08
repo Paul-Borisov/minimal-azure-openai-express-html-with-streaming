@@ -23,13 +23,25 @@ Technical stack:
 
 ### Updates and bug fixes:
 
+**August 8, 2025, v1.1.34**
+- Added support for Google video models - see [index.html](public/index.html):
+  - veo-3.0-generate-preview – outputs video with sound
+  - veo-3.0-fast-generate-preview – outputs video with sound
+  - veo-2.0-generate-001 – legacy model; flexible video length (5–8 s), aspect ratios 16:9 or 9:16, **no** sound
+- To use these models:
+  - Register at https://console.cloud.google.com
+  - Create a project at https://console.cloud.google.com/cloud-resource-manager
+  - Obtain an API KEY from https://aistudio.google.com/app/apikey, and save add to your .env file as GENIMI_API_KEY=\<your apikey\> (see .env.example for reference).
+  - Set up at least "pay-as-you-go" billing - Google video models are not free.
+  - Details on pricing: https://ai.google.dev/gemini-api/docs/pricing
+
 **August 7, 2025, v1.1.33**
 - Added support for the models gpt-5, gpt-5-mini, gpt-5-nano, gpt-5-chat-latest.
   - The models gpt-5-mini, gpt-5-nano, gpt-5-chat are also available on Azure OpenAI.
 - Improved generations of long Sora videos (15s+) to support deployments to Azure Container Apps.
   - Azure Container Apps (ACA) have the the problem with too short timeouts that abrupt long running requests after 4 min.
   - The hotfix proposed by Microsoft does not work correctly as of today.
-  - I separated image generation and job status polling. This solved the problem with ACA timeouts.
+  - I separated the logic for image generation and job status polling. This solved the problem with ACA timeouts.
 
 **June 15, 2025, v1.1.32**
 - Added support for Azure OpenAI Sora model (preview).
