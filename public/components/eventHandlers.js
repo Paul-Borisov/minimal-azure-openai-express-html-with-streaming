@@ -60,7 +60,11 @@ export function initEventHandlers(deps) {
     if (isImageModel(modelRef.value)) {
       handleNextPrompt(modelRef.value !== "dall-e-2" ? "image" : "image_dalle_2", txtPrompt);
     } else if (isVideoModel(modelRef.value)) {
-      handleNextPrompt("video", txtPrompt);
+      if (/veo-3/.test(modelRef.value)) {
+        handleNextPrompt("video_with_sound", txtPrompt);
+      } else {
+        handleNextPrompt("video", txtPrompt);
+      }
     }
   });
 
