@@ -37,7 +37,7 @@ Technical stack:
 
   [![Video generations with Google Veo3 and Veo2](docs/images/8_video-generation-with-google-veo3-and-veo2.png "Video generations with Google Veo3 and Veo2")](https://raw.githubusercontent.com/Paul-Borisov/minimal-azure-openai-express-html-with-streaming/main/docs/images/american-man-is-talking-about-classic-sports-cars.mp4)
 
-  A Finnish speech sample:
+  Another sample with Finnish speech:
 
   [![Video generations with Google Veo3 with speech in Finnish](docs/images/9_video-generation-with-google-veo3-finnish.png "Video generations with Google Veo3 with speech in Finnish")](https://raw.githubusercontent.com/Paul-Borisov/minimal-azure-openai-express-html-with-streaming/main/docs/images/finnish-man-is-talking-about-classic-sports-cars.mp4)
 
