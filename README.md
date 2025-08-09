@@ -23,7 +23,7 @@ Technical stack:
 
 ### Updates and bug fixes:
 
-**August 8, 2025, v1.1.34**
+**August 9, 2025, v1.1.34**
 - Added support for Google video models - see [index.html](public/index.html):
   - veo-3.0-generate-preview – outputs video with sound
   - veo-3.0-fast-generate-preview – outputs video with sound
