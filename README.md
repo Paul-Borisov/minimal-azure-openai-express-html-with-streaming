@@ -35,11 +35,13 @@ Technical stack:
   - Set up at least "pay-as-you-go" billing - Google video models are not free.
   - Details on pricing: https://ai.google.dev/gemini-api/docs/pricing
 
-  [![Video generations with Google Veo3 and Veo2](docs/images/8_video-generation-with-google-veo3-and-veo2.png "Video generations with Google Veo3 and Veo2")](https://raw.githubusercontent.com/Paul-Borisov/minimal-azure-openai-express-html-with-streaming/main/docs/images/american-man-is-talking-about-classic-sports-cars.mp4)
+  Toggle the sound in these generated video samples below.
 
-  Another sample with Finnish speech:
+  [![Video generations with Google Veo3 in English](docs/images/8_video-generation-with-google-veo3-and-veo2.png)](https://github.com/user-attachments/assets/138ce720-f1b6-4fd6-833f-25a7a2aab731)
 
-  [![Video generations with Google Veo3 with speech in Finnish](docs/images/9_video-generation-with-google-veo3-finnish.png "Video generations with Google Veo3 with speech in Finnish")](https://raw.githubusercontent.com/Paul-Borisov/minimal-azure-openai-express-html-with-streaming/main/docs/images/finnish-man-is-talking-about-classic-sports-cars.mp4)
+  
+  [![Video generations with Google Veo3 in Finnish](docs/images/9_video-generation-with-google-veo3-finnish.png)](https://github.com/user-attachments/assets/22811f36-5f7a-4a37-84f9-225b7a625f6d)
+
 
 **August 7, 2025, v1.1.33**
 - Added support for the models gpt-5, gpt-5-mini, gpt-5-nano, gpt-5-chat-latest.
