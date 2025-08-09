@@ -36,6 +36,9 @@ Technical stack:
   - Details on pricing: https://ai.google.dev/gemini-api/docs/pricing
 
   [![Video generations with Google Veo3 and Veo2](docs/images/8_video-generation-with-google-veo3-and-veo2.png "Video generations with Google Veo3 and Veo2")](https://raw.githubusercontent.com/Paul-Borisov/minimal-azure-openai-express-html-with-streaming/main/docs/images/american-man-is-talking-about-classic-sports-cars.mp4)
+
+  A Finnish speech sample:
+
   [![Video generations with Google Veo3 with speech in Finnish](docs/images/9_video-generation-with-google-veo3-in-finnish.png "Video generations with Google Veo3 with speech in Finnish")](https://raw.githubusercontent.com/Paul-Borisov/minimal-azure-openai-express-html-with-streaming/main/docs/images/finnish-man-is-talking-about-classic-sports-cars.mp4)
 
 **August 7, 2025, v1.1.33**
