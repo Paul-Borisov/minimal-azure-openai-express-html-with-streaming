@@ -39,7 +39,7 @@ Technical stack:
 
   A Finnish speech sample:
 
-  [![Video generations with Google Veo3 with speech in Finnish](docs/images/9_video-generation-with-google-veo3-in-finnish.png "Video generations with Google Veo3 with speech in Finnish")](https://raw.githubusercontent.com/Paul-Borisov/minimal-azure-openai-express-html-with-streaming/main/docs/images/finnish-man-is-talking-about-classic-sports-cars.mp4)
+  [![Video generations with Google Veo3 with speech in Finnish](docs/images/9_video-generation-with-google-veo3-finnish.png "Video generations with Google Veo3 with speech in Finnish")](https://raw.githubusercontent.com/Paul-Borisov/minimal-azure-openai-express-html-with-streaming/main/docs/images/finnish-man-is-talking-about-classic-sports-cars.mp4)
 
 **August 7, 2025, v1.1.33**
 - Added support for the models gpt-5, gpt-5-mini, gpt-5-nano, gpt-5-chat-latest.
