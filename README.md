@@ -35,7 +35,7 @@ Technical stack:
   - Set up at least "pay-as-you-go" billing - Google video models are not free.
   - Details on pricing: https://ai.google.dev/gemini-api/docs/pricing
 
-  Toggle the sound in these generated video samples below:
+  Toggle the sound in these generated video samples below.
 
   [![Video generations with Google Veo3 in English](docs/images/8_video-generation-with-google-veo3-and-veo2.png)](https://github.com/user-attachments/assets/138ce720-f1b6-4fd6-833f-25a7a2aab731)
 
