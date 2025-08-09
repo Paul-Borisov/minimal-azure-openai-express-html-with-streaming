@@ -39,7 +39,7 @@ Technical stack:
 
   Another sample with Finnish speech:
 
-  ![Video generations with Google Veo3 with speech in Finnish](https://github.com/user-attachments/assets/22811f36-5f7a-4a37-84f9-225b7a625f6d "Video generations with Google Veo3 with speech in Finnish")
+  [![Video generations with Google Veo3 with speech in Finnish](docs/images/9_video-generation-with-google-veo3-finnish.png "Video generations with Google Veo3 with speech in Finnish")](https://github.com/user-attachments/assets/22811f36-5f7a-4a37-84f9-225b7a625f6d)
 
 **August 7, 2025, v1.1.33**
 - Added support for the models gpt-5, gpt-5-mini, gpt-5-nano, gpt-5-chat-latest.
