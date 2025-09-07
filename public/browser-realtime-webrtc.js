@@ -173,7 +173,7 @@
               noise_reduction: audio_input_noise_reduction,
               transcription: audio_input_transcription,
               turn_detection
-            } 
+            }
           },
         }
       } else {
@@ -191,7 +191,7 @@
     dataChannel.addEventListener("open", () => {
       updateSession();
       startConversationFromThePrompt();
-    });    
+    });
     window.stopRealtimeSession = function() {
       if (dataChannel) dataChannel.close();
       if (peerConnection) peerConnection.close();
