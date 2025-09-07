@@ -26,7 +26,7 @@ Technical stack:
 **September 7, 2025, v1.1.35**
 - Added support for **gpt-realtime**, which is a newer GA replacement for gpt-4o-realtime-preview
   - Using this new model with the option to output user' transcript along with audio requires new syntax for the **session.update** event.
-  - You can find the example in [public/browser-realtime-webrtc.js:updateSession](public/browser-realtime-webrtc.js).
+  - You can find the example in [public/browser-realtime-webrtc.js:updateSession](public/browser-realtime-webrtc.js#L150-L194).
 
 **August 9, 2025, v1.1.34**
 - Added support for Google video models - see [index.html](public/index.html):
