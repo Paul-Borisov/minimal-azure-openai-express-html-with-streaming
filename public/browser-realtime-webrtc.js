@@ -14,6 +14,7 @@
     const rawOutput = [];
     updateRealtimeRootInnerHtml(formattedChatHistory, formattedUserRequest, [thinkingHeader]);
 
+    const isGAModel = /^(gpt-realtime|gpt-5-)/i.test(model); // Newer GA models use different URLs and start parameters
     const tokenResponse = await fetch(`/api/openai/session?model=${model}`);
     const data = await tokenResponse.json();
     const EPHEMERAL_KEY = data.client_secret.value;
@@ -38,9 +39,14 @@
     const userVoiceInput = [];
     dataChannel.addEventListener("message", (e) => {
       const realtimeEvent = JSON.parse(e.data);
+      //console.log(realtimeEvent)
       switch(realtimeEvent.type) {
         case "conversation.item.created": {
-          //console.log(`${realtimeEvent.item.role}`);
+          // Older event, which was used by gpt-4o-realtime-preview.
+          // no break here to falldown to the next newer event.
+        }
+        case "conversation.item.done": {  // New event for gpt-preview
+          console.log(`${realtimeEvent.item.role}`);
           if(realtimeEvent.item.role === "user") {
             rawOutput.length = 0;
             userVoiceInput.length = 0;
@@ -69,12 +75,20 @@
           }
           break;
         }
+        case "response.output_audio_transcript.delta": {
+          //console.log(`${realtimeEvent.delta}`);
+          if(realtimeEvent.delta) {
+            rawOutput.push(realtimeEvent.delta);
+            updateRealtimeRootInnerHtml(formattedChatHistory, formattedUserRequest, rawOutput);
+          }
+          break;
+        }
         case "response.content_part.done": {
           //console.log("response.content_part.done", userVoiceTranscript)
           if(realtimeEvent.part.transcript) console.log(`${realtimeEvent.part.transcript}`);
           chatHistory.push({ role: "user", content: userVoiceTranscript });
           chatHistory.push({ role: "assistant", content: rawOutput.join("") });
-          //console.log(chatHistory)
+          //console.log(chatHistory);
           formattedChatHistory = getFormattedChatHistory();
           break;          
         }
@@ -88,7 +102,8 @@
     const offer = await peerConnection.createOffer();
     await peerConnection.setLocalDescription(offer);
 
-    const baseUrl = "https://api.openai.com/v1/realtime";
+    let baseUrl = "https://api.openai.com/v1/realtime";
+    if (isGAModel) baseUrl += "/calls";   
     const sdpResponse = await fetch(`${baseUrl}?model=${model}`, {
       method: "POST",
       body: offer.sdp,
@@ -112,6 +127,9 @@
           instructions: prompt
         }
       };
+      if (isGAModel) {
+        delete responseCreate.response.modalities; // New GA models must not have this parameter specified
+      }
       dataChannel.send(JSON.stringify(responseCreate));
       const event = {
         type: "conversation.item.create",
@@ -128,17 +146,50 @@
       };
       dataChannel.send(JSON.stringify(event));
     };
-    // const updateSession = () => {
-    //   const event = {
-    //     type: "session.update",
-    //     session: {
-    //       "instructions": "Start with responding to the prompt",
-    //     }
-    //   }
-    //   dataChannel.send(JSON.stringify(event));
-    // };    
-    dataChannel.addEventListener('open', () => {
-      //updateSession();
+
+    const updateSession = () => {
+      const audio_input_noise_reduction = { type: "far_field" };
+      const audio_input_transcription = { 
+        model: "whisper-1",  // or gpt-4o-transcribe if enabled on your account
+        // language: "en",      // optional
+        // prompt: "domain terms, names, etc." // optional biasing prompt
+      };
+      const turn_detection = {
+        type: "server_vad",
+        threshold: 0.5,
+        prefix_padding_ms: 300,
+        silence_duration_ms: 500
+      };
+      const eventEnableUserTranscript = {
+        type: "session.update",
+        session: { model }
+      };
+      if (isGAModel) {
+        eventEnableUserTranscript.session = {
+          type: "realtime",
+          ...eventEnableUserTranscript.session,
+          audio: {
+            input: {
+              noise_reduction: audio_input_noise_reduction,
+              transcription: audio_input_transcription,
+              turn_detection
+            } 
+          },
+        }
+      } else {
+        // The older syntax, which was used for gpt-4o-realtime-preview
+        // This is already set on the server side. Duplicated here just as an example.
+        eventEnableUserTranscript.session = {
+          ...eventEnableUserTranscript.session,
+          input_audio_noise_reduction: audio_input_noise_reduction,
+          input_audio_transcription: audio_input_transcription,
+          turn_detection
+        }
+      }
+      dataChannel.send(JSON.stringify(eventEnableUserTranscript));
+    };
+    dataChannel.addEventListener("open", () => {
+      updateSession();
       startConversationFromThePrompt();
     });    
     window.stopRealtimeSession = function() {

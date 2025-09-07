@@ -13,8 +13,13 @@
 * 4. Start the server using the command node server-entraid.js. The keyless auth should work.
 */
 import cors from "cors";
+import dotenv from "dotenv";
 import express from "express";
+import os from "os";
+import path from "path";
 import { createAzureOpenAI, isAzureOpenAiSupported, isAzureOpenAiInstanceSupported } from "./openai/azureOpenAI.js";
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 import { generateAudioOutput } from "./openai/textToSpeech.js";
 import { generateCompletionsStream } from "./openai/completions.js";
 import { generateEmbedding } from "./openai/embeddings.js";
@@ -22,13 +27,10 @@ import { generateImage } from "./openai/images.js";
 import { generateResponsesStream } from "./openai/responses.js";
 import { generateVideoOutput, getGeneratedVideo } from "./openai/video.js";
 import { generateVideoVeo3, getGeneratedVideoVeo3 } from "./google/videoVeo3.js";
+import { getEphemeralKey } from "./openai/realtime.webrtc.js";
 import { OpenAI } from "openai";
-import path from "path";
-import os from "os";
-import dotenv from "dotenv";
 import { thinkingHeader, validateSupportedAssets } from "./openai/shared.js";
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = dirname(__filename);
 
@@ -101,31 +103,11 @@ app.post(
 );
 
 app.get("/api/openai/session", async (req, res) => {
-  const model = req.query.model || "gpt-4o-mini-realtime-preview";
+  const model = req.query.model || "gpt-realtime";
   try {
     await validateSupportedAssets(model, "openai");
-    const r = await fetch("https://api.openai.com/v1/realtime/sessions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model,
-        modalities: ["audio", "text"],
-        voice: "verse",
-        input_audio_transcription: {
-          model: "whisper-1",
-        },
-        // input_audio_noise_reduction: null // default, noise reduction disabled; this mode is the most sensitive to any sound input
-        input_audio_noise_reduction: {
-          //type: "near_field" // near_field is for close-talking microphones such as headphones
-          type: "far_field"    // far_field is for far-field microphones such as laptop or conference room microphones
-        }  
-      }),
-    });
-    const data = await r.json();
-    res.send(data);
+    const ephemeralKey = await getEphemeralKey({model, apiKey});
+    res.json({client_secret: {value: ephemeralKey}});
   } catch (e) {
     res.status(500).send({ message: e.message });
   }
