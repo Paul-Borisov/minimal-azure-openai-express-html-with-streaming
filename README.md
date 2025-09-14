@@ -9,7 +9,7 @@ The server can be started quickly in VSCode and in the local docker container. I
 This server supports:
 
 - Key and keyless Entra ID authentication for Azure OpenAI.
-- Image generation using **gpt-image-1** and realtime audio chat with **gpt-4o-realtime-preview**.
+- Image generation using **gpt-image-1** and realtime audio chat with **gpt-realtime**.
 - Streaming outputs in OpenAI and Azure OpenAI, cancelling the streaming request with the **Stop** button.
 - Options to formatting AI outputs for code blocks and markdown content.
 - Working with chat history context. Samples for code generations and text prompts.
